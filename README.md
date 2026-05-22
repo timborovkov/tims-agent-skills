@@ -12,9 +12,10 @@ links.
 ```
 personal-skills/
 ├── install.sh            # symlink each skill into all three tool dirs
-├── handoff/
-│   └── SKILL.md          # end-of-session handoff workflow
-└── <next-skill>/
+├── timb-handoff-and-follow-up/
+│   ├── SKILL.md          # end-of-session handoff + follow-up workflow
+│   └── aliases           # optional legacy / short names
+└── timb-<next-skill>/
     └── SKILL.md
 ```
 
@@ -36,17 +37,18 @@ What it does:
   - `~/.claude/skills/<name>`
   - `~/.cursor/skills/<name>`
   - `~/.config/opencode/skills/<name>`
+- Also creates aliases listed in `<name>/aliases` (one alias per line)
 - Fixes stale symlinks pointing at old locations
 - Leaves existing correct symlinks alone
 - Refuses to overwrite non-symlink files (safety)
 
 ## Adding a new skill
 
-1. `mkdir <new-skill-name>` inside this repo
-2. Write `<new-skill-name>/SKILL.md` with frontmatter:
+1. `mkdir timb-<new-skill-name>` inside this repo
+2. Write `timb-<new-skill-name>/SKILL.md` with frontmatter:
    ```yaml
    ---
-   name: <new-skill-name>
+   name: timb-<new-skill-name>
    description: >-
      One paragraph explaining when to use this skill. Mention concrete trigger
      phrases. Be explicit about when NOT to use it.
@@ -60,4 +62,4 @@ What it does:
 
 | Skill | Description |
 |---|---|
-| `handoff` | End-of-session workflow: align docs against the diff, then write a self-contained prompt for the next agent. Use after /ship + /document-release on substantive work. |
+| `timb-handoff-and-follow-up` | End-of-session workflow: align docs/TODO markdown against the diff, then write prompts for one or more independent follow-up agents. Aliases: `handoff`, `handoff-and-follow-up`. |
