@@ -15,7 +15,9 @@ description: >-
 
 # Timb In-Repo Docs
 
-The opinionated rules for how docs live in any repo I work in. Apply whenever you author or edit a doc, or when explicitly asked to align an existing repo's docs.
+The opinionated rules for how docs live in any repo I work in. Apply when creating a new HTML doc, creating a new package/subfolder README, converting markdown to HTML, or running an explicit alignment sweep. Do **not** apply to ordinary edits of existing markdown — those follow the existing file's conventions.
+
+**Path conventions used below.** `<docsDir>` means whatever directory `design.md` declares, defaulting to `docs/`. Wherever this skill says `docs/` literally, substitute `<docsDir>`. The "agent-generated index" lives at `<docsDir>/index.html`; assets at `<docsDir>/assets/`; HTML cross-links use paths relative to the doc being written.
 
 ## Format selection — which files are HTML vs markdown
 
@@ -28,6 +30,7 @@ Markdown, untouched:
 - `todo.md`, `TODO.md`, `TODOS.md`, `PLAN.md` — TODOs stay markdown.
 - `README.md` at repo root and in every package / major subfolder.
 - `CHANGELOG.md`, `LICENSE`, `CONTRIBUTING.md`, `AGENTS.md`, `CLAUDE.md`.
+- `design.md` (and `docs/design.md`) — this skill *reads* `design.md`; it must never convert, rename, or delete it.
 - Any `.md` file consumed as page content (MDX imports, content collections, docs sites). Detect before touching.
 
 ### Consumer check — mandatory before converting any `.md` to HTML
@@ -69,9 +72,9 @@ Every HTML doc under `docs/`:
 - Anchored headings (`id` attributes) so other docs can deep-link.
 - Relative cross-links to sibling docs (`./architecture.html`).
 
-**Single-file mode (default):** all CSS in a `<style>` block, any small JS inline. No external assets except images/SVGs in `docs/assets/`.
+**Single-file mode (default):** all CSS in a `<style>` block, any small JS inline. The only external asset allowed is the pinned mermaid CDN script (see Visual-first authoring), and only on pages that actually contain a mermaid diagram. Everything else — images, fonts, icons, additional JS libraries — is local under `<docsDir>/assets/`. If `design.md` declares an offline requirement, vendor mermaid too.
 
-**Shared-stylesheet mode:** pages link `../assets/styles.css`; keep that file aligned with `design.md` tokens. Avoid per-page `<style>` blocks beyond small page-specific tweaks.
+**Shared-stylesheet mode:** pages link `./assets/styles.css` (relative to the doc — adjust depth for nested docs); keep that file aligned with `design.md` tokens. Avoid per-page `<style>` blocks beyond small page-specific tweaks.
 
 ## Visual-first authoring
 
@@ -131,27 +134,28 @@ For `todo.md` / `TODO.md` / `TODOS.md` / `PLAN.md`:
 
 ## Flow A — authoring a single new/edited doc
 
-1. Determine the doc kind. TODO / README / CHANGELOG / AGENTS / CLAUDE → markdown. Otherwise HTML in `docs/`.
-2. Read `design.md`. If absent, report and fall back to defaults.
+1. Determine the doc kind. TODO / README / CHANGELOG / AGENTS / CLAUDE / `design.md` → markdown. Otherwise HTML in `<docsDir>`.
+2. Read `design.md` (repo root, or `<docsDir>/design.md`) to resolve `<docsDir>` and the HTML mode. If absent, report and fall back to defaults (`<docsDir>` = `docs/`, single-file self-contained, plain palette).
 3. If editing an existing `.md` that should be HTML, run the consumer check first. If consumed as content, keep it markdown and note it.
-4. Write the doc following the style and visual-first rules. Add `id` anchors on headings. Cross-link relevant sibling docs (`ls docs/*.html`). Any link to another doc in this repo points to `.html`, never `.md` (unless that target is a content-consumed `.md` per the consumer check).
-5. Update `docs/index.html` so the new doc is linked from the index, grouped by kind. The index's doc-list region is agent-generated — wrap it in `<!-- docs:index:start -->` / `<!-- docs:index:end -->` markers and regenerate from the current `docs/*.html` glob on every run. Outside those markers (intro, custom sections) is hand-editable and must be preserved verbatim. If `index.html` doesn't exist, create it with the markers in place.
+4. Write the doc following the style and visual-first rules. Add `id` anchors on headings. Discover sibling docs with a recursive listing of `<docsDir>` (e.g. `find <docsDir> -name '*.html'`). Any link to another doc in this repo points to `.html`, never `.md` (unless that target is a content-consumed `.md` per the consumer check).
+5. Update `<docsDir>/index.html` so the new doc is linked from the index, grouped by kind. The index's doc-list region is agent-generated — wrap it in `<!-- docs:index:start -->` / `<!-- docs:index:end -->` markers and regenerate it from a recursive walk of `<docsDir>` for every `.html` file (excluding `index.html` itself) on every run. Outside those markers (intro, custom sections) is hand-editable and must be preserved verbatim. If `index.html` doesn't exist, create it with the markers in place.
 6. Set the `last-updated` metadata to today's date (`date -u +%Y-%m-%d`).
 7. End with one line: what changed, what's outstanding, any human decisions needed.
 
 ## Flow B — alignment sweep across the whole repo
 
 1. **Clean tree.** Confirm `git status` is clean (or only contains changes the user explicitly told you about). Flow B mutates and deletes files — uncommitted hand-edits could be lost. If the tree is dirty, stop and ask.
-2. **Inventory.** List every `.md` and every existing `docs/` entry. Note which `.md` files are content-consumed (consumer check + framework patterns above).
-3. **Read `design.md`.** If absent, stop and ask whether to proceed with defaults or create one first.
-4. **Convert (one commit per file).** For each `.md` that should be HTML and isn't consumed:
-   - Convert to HTML, preserving info and applying the style and visual-first rules.
-   - Rewrite every in-doc link from `*.md` → `*.html`, except links pointing to content-consumed markdown files (those keep `.md`).
+2. **Read `design.md`.** Resolve `<docsDir>` and HTML mode. If absent, report it, suggest `/design-consultation`, and fall back to defaults (`<docsDir>` = `docs/`, single-file self-contained, plain palette) — do **not** halt the sweep. Halting is only for a dirty tree (step 1).
+3. **Inventory.** List every `.md` in the repo and every existing file under `<docsDir>` (recursive). Note which `.md` files are content-consumed (consumer check + framework patterns above) and which are in the protected list (`README.md`, `TODO*.md`, `CHANGELOG.md`, `LICENSE`, `CONTRIBUTING.md`, `AGENTS.md`, `CLAUDE.md`, `design.md`).
+4. **Convert (one commit per file).** For each `.md` that should be HTML and isn't consumed or protected:
+   - Convert to HTML and place the result under `<docsDir>` (preserving any meaningful sub-path under `<docsDir>`, e.g. `<docsDir>/architecture/overview.html` for `architecture/overview.md`). Never leave converted HTML scattered at the repo root.
+   - Preserve info and apply the style and visual-first rules.
+   - Rewrite every in-doc link from `*.md` → the new `.html` location, except links pointing to content-consumed markdown files (those keep `.md`).
    - Update any other files in the repo that referenced the old `.md` path.
    - Stage the new `.html`, the link updates, and the `.md` deletion as a **single commit per converted file** so each conversion is trivially revertable. Don't bundle multiple conversions into one commit.
 5. **READMEs.** For each subfolder/package missing a README, draft one from the code.
 6. **TODOs.** Run TODO compaction on every TODO/PLAN file.
-7. **Index.** Verify `docs/index.html` exists and the agent-generated region (between the markers) links every HTML doc, grouped by kind.
+7. **Index.** Verify `<docsDir>/index.html` exists and the agent-generated region (between the markers) links every HTML doc under `<docsDir>` (recursive, excluding `index.html` itself), grouped by kind.
 8. **Report.** Summarize: converted, created, left-as-markdown (with reason), READMEs added, TODOs compacted, anything that needs human input.
 
 End with one line: what changed, what's outstanding, any human decisions needed.
