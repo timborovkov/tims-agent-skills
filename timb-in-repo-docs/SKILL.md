@@ -31,7 +31,7 @@ HTML in `docs/` (or whatever `docsDir` `design.md` declares):
 Markdown, untouched:
 
 - Any file matching (case-insensitive) `todo.md`, `todos.md`, `plan.md`, `plans.md`, `roadmap.md` — TODO/plan tracking stays markdown.
-- `README.md` (any case) at repo root and in every package / major subfolder.
+- `README.md` (any case, anywhere in the tree) — required at repo root and in every package/major subfolder, but protected wherever it appears.
 - `CHANGELOG.md`, `CHANGES.md`, `HISTORY.md`, `NEWS.md`, `LICENSE`, `LICENCE`, `LICENSE.md`, `LICENCE.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `SUPPORT.md`, `GOVERNANCE.md`, `AUTHORS.md`, `MAINTAINERS.md`, `AGENTS.md`, `CLAUDE.md` — all case-insensitive.
 - `SKILL.md` anywhere in the tree — these define agent skills. Converting one breaks skill discovery, installer scripts, and the harness. Never touch.
 - `design.md` at any of these locations — repo root, `<docsDir>/design.md`, `docs/design.md`, `.docs/design.md` — this skill *reads* `design.md`; it must never convert, rename, or delete any copy in these paths.
@@ -52,7 +52,14 @@ Before you delete or convert any existing `.md`:
 
 ## `design.md` is the per-repo source of truth
 
-Look for `design.md` in this order, taking the first one that exists: `./design.md` (repo root), `./docs/design.md`, `./.docs/design.md`. Read it for:
+Look for `design.md` in this order, taking the first one that exists:
+
+1. `./design.md` (repo root).
+2. `./docs/design.md`.
+3. `./.docs/design.md`.
+4. **Fallback search** if none of the above exist: `git ls-files | grep -iE '(^|/)design\.md$'` (exclude any path inside `node_modules`, `vendor`, `dist`, `build`, `out`, `target`, `.next`, `.nuxt`, `.svelte-kit`, `.cache`, `coverage`). If exactly one candidate remains, use it. If multiple remain, report the candidates and ask the user which one. This catches `design.md` that lives only inside a custom `docsDir` (e.g. `wiki/design.md`, `site/design.md`) which can't be found without first knowing `docsDir`.
+
+Read it for:
 
 - Aesthetic tokens — colors, type, spacing, radii, motion.
 - HTML mode — **single-file self-contained** (CSS inlined per page) or **shared stylesheet** (`docs/assets/styles.css` linked).
@@ -161,6 +168,7 @@ Applies to every protected TODO/plan file: `todo.md`, `todos.md`, `plan.md`, `pl
 3. **Inventory.** List every tracked markdown file (any case: `.md`, `.MD`, `.Md`) and every existing file under `<docsDir>` (recursive). **Exclude** anything inside `node_modules/`, `.git/`, `vendor/`, `third_party/`, `dist/`, `build/`, `out/`, `target/`, `.next/`, `.nuxt/`, `.svelte-kit/`, `.cache/`, `coverage/`, or any path listed in `.gitignore`. Use `git ls-files | grep -iE '\.md$'` as the canonical inventory source — `git ls-files` already respects gitignore and excludes vendored/build trees; the `-i` grep catches uppercase extensions that `git ls-files '*.md'` would miss on case-sensitive filesystems. Note which files are content-consumed (consumer check + framework patterns above) and which are in the protected list (case-insensitive match against the full protected set above, including `SKILL.md` anywhere in the tree).
 4. **CMS gate.** Run the consumer check on the full inventory and detect any content systems wired into the repo (`next-mdx`, `contentlayer`, `velite`, `astro:content`, `docusaurus`, `vitepress`, `nextra`, `mdx-bundler`, `gatsby-*-md*`, framework `content/`/`posts/` with frontmatter, MD→RSS, GitHub Pages, Read the Docs). If **any** content system is present, stop and ask the user once: list every `.md` you intend to convert and the systems detected, and proceed only with the user's explicit go-ahead (per-file or blanket). If no content system is present, continue without a prompt.
 5. **Convert (one commit per file).** For each `.md` that should be HTML and isn't consumed or protected:
+   - **Per-file consumer check first.** Even when the CMS gate (step 4) found no framework, run the basename + slug `rg` checks from the Consumer check section against this specific file before any mutation. Repos can have ad-hoc imports outside the known content systems. If the per-file check finds any reference, keep the file as markdown and move on to the next.
    - Convert to HTML and place the result under `<docsDir>`. Path mapping rules:
      - File already under `<docsDir>`: mirror its sub-path verbatim. `<docsDir>/architecture/overview.md` → `<docsDir>/architecture/overview.html`.
      - File at repo root and not in the protected list (e.g. `ARCHITECTURE.md`, `ONBOARDING.md`, `STYLE_GUIDE.md`): place at `<docsDir>/<basename>.html`, lower-cased and kebab-cased (`<docsDir>/architecture.html`, `<docsDir>/style-guide.html`). Note: `ROADMAP.md`, `TODO.md`, `PLAN.md`, `LICENSE.md`, `README.md`, `SECURITY.md`, etc. are protected and never reach this step.
@@ -171,8 +179,12 @@ Applies to every protected TODO/plan file: `todo.md`, `todos.md`, `plan.md`, `pl
    - Update any other files in the repo that referenced the old `.md` path.
    - Stage the new `.html`, the link updates, and the `.md` deletion as a **single commit per converted file** so each conversion is trivially revertable. Don't bundle multiple conversions into one commit.
 6. **READMEs.** For each subfolder/package missing a README, draft one from the code.
-7. **TODOs.** Run TODO compaction on every TODO/PLAN file.
-8. **Index.** Create `<docsDir>/index.html` if it doesn't exist (with the `<!-- docs:index:start -->` / `<!-- docs:index:end -->` markers in place per Flow A step 5). Then regenerate the agent-generated region between the markers from a recursive walk of `<docsDir>` for every `.html` file (excluding `index.html` itself), grouped by kind. Preserve everything outside the markers verbatim.
+7. **TODOs.** For every protected TODO/plan file (`todo`/`todos`/`plan`/`plans`/`roadmap`, case-insensitive), apply the TODO compaction section's rules — including its gates: respect existing project conventions, only restructure when the file has no convention or the user explicitly asks, and only compact when the gates trigger (>15 items in the latest Done section, or completed items interleaved at the top of the open list). Don't blindly rewrite every tracker.
+8. **Index.** Resolve `<docsDir>/index.html`:
+   - **Missing:** create it from scratch with the `<!-- docs:index:start -->` / `<!-- docs:index:end -->` markers in place (per Flow A step 5).
+   - **Exists with markers:** regenerate only the agent-managed region between the markers. Preserve everything outside the markers verbatim.
+   - **Exists without markers:** do not overwrite. Show the current contents to the user and ask where to insert the markers (typically at the end of the body, before any footer). Insert the markers and an empty initial body region only after explicit approval; never mutate existing hand-edited content silently.
+   Then regenerate the marker region from a recursive walk of `<docsDir>` for every `.html` file (excluding `index.html` itself), grouped by kind.
 9. **Report.** Summarize: converted, created, left-as-markdown (with reason), READMEs added, TODOs compacted, anything that needs human input.
 
 End with one line: what changed, what's outstanding, any human decisions needed.

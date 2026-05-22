@@ -64,3 +64,4 @@ What it does:
 |---|---|
 | `timb-handoff-and-follow-up` | End-of-session workflow: align docs/TODO markdown against the diff, then write prompts for one or more independent follow-up agents. Aliases: `handoff`, `handoff-and-follow-up`. |
 | `timb-in-repo-docs` | Write and maintain in-repo docs. HTML in `docs/` for briefs/guides/explainers/architecture (styled per `design.md`, visual-first), markdown for TODOs/READMEs/CHANGELOG, and a consumer check before touching any `.md` that's used as page content. Two flows: author a single doc, or run a structural sweep across the whole repo. Aliases: `in-repo-docs`, `docs-sweep`. |
+| `timb-trim` | Code quality + line-count pass over the whole codebase or the diff vs main. Writes a findings report, gates refactors on real test coverage, implements after approval, deletes the report. Aliases: `trim`, `reduce`, `simplify-review`. |
