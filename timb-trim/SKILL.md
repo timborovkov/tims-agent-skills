@@ -54,7 +54,7 @@ When a finding does touch a third-party library, invoke `/find-docs` (or fall ba
 
 ## 3. Findings pass (read-only)
 
-Walk in-scope files and collect findings under five buckets:
+Walk in-scope files and collect findings under six buckets (a–e, plus P for anything touching public surface):
 
 **a. Verbose comments.** Multi-line comments that restate the code or wander. Keep the WHY (constraints, invariants, gotchas); drop narration. Block comments that could be one line, or removed entirely.
 
