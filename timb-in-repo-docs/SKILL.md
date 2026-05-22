@@ -34,7 +34,7 @@ Markdown, untouched:
 - `README.md` (any case) at repo root and in every package / major subfolder.
 - `CHANGELOG.md`, `CHANGES.md`, `HISTORY.md`, `NEWS.md`, `LICENSE`, `LICENCE`, `LICENSE.md`, `LICENCE.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `SUPPORT.md`, `GOVERNANCE.md`, `AUTHORS.md`, `MAINTAINERS.md`, `AGENTS.md`, `CLAUDE.md` — all case-insensitive.
 - `SKILL.md` anywhere in the tree — these define agent skills. Converting one breaks skill discovery, installer scripts, and the harness. Never touch.
-- `design.md` at the repo root or anywhere under `<docsDir>` — this skill *reads* `design.md`; it must never convert, rename, or delete it.
+- `design.md` at any of these locations — repo root, `<docsDir>/design.md`, `docs/design.md`, `.docs/design.md` — this skill *reads* `design.md`; it must never convert, rename, or delete any copy in these paths.
 - Any `.md` file consumed as page content (MDX imports, content collections, docs sites). Detect before touching.
 
 Match the protected list case-insensitively (`README.MD`, `Todo.md`, and `readme.md` are all protected). When in doubt about whether a file is protected, treat it as protected and ask.
@@ -58,7 +58,7 @@ Look for `design.md` in this order, taking the first one that exists: `./design.
 - HTML mode — **single-file self-contained** (CSS inlined per page) or **shared stylesheet** (`docs/assets/styles.css` linked).
 - Optional overrides — `docsDir`, "these .md files are page content, never convert."
 
-Once you've resolved `docsDir`, also check for a second `design.md` at `<docsDir>/design.md` if you found the first at the repo root — the in-`docsDir` copy, if present, takes precedence. Never load `design.md` from `node_modules`, vendored trees, or anywhere not in this list.
+Once you've resolved `docsDir`, also check for a `design.md` at `<docsDir>/design.md` whenever it differs from the file you already loaded. If a different file exists there, it takes precedence — reload from that path. Never load `design.md` from `node_modules`, vendored trees, or anywhere not in this list.
 
 If `design.md` is missing:
 
@@ -163,7 +163,7 @@ Applies to every protected TODO/plan file: `todo.md`, `todos.md`, `plan.md`, `pl
 5. **Convert (one commit per file).** For each `.md` that should be HTML and isn't consumed or protected:
    - Convert to HTML and place the result under `<docsDir>`. Path mapping rules:
      - File already under `<docsDir>`: mirror its sub-path verbatim. `<docsDir>/architecture/overview.md` → `<docsDir>/architecture/overview.html`.
-     - File at repo root (e.g. `ARCHITECTURE.md`, `ROADMAP.md` when not in the protected list): place at `<docsDir>/<basename>.html`, lower-cased and kebab-cased (`<docsDir>/architecture.html`).
+     - File at repo root and not in the protected list (e.g. `ARCHITECTURE.md`, `ONBOARDING.md`, `STYLE_GUIDE.md`): place at `<docsDir>/<basename>.html`, lower-cased and kebab-cased (`<docsDir>/architecture.html`, `<docsDir>/style-guide.html`). Note: `ROADMAP.md`, `TODO.md`, `PLAN.md`, `LICENSE.md`, `README.md`, `SECURITY.md`, etc. are protected and never reach this step.
      - File under a meaningful tree like `packages/<pkg>/docs/foo.md`, `apps/<app>/notes/bar.md`, `src/<area>/explainer.md`: collapse the framework/scaffolding prefix and preserve the rest. `packages/<pkg>/docs/foo.md` → `<docsDir>/<pkg>/foo.html`. `apps/<app>/notes/bar.md` → `<docsDir>/<app>/bar.html`. `src/<area>/explainer.md` → `<docsDir>/<area>/explainer.html`. If two source files would collapse to the same destination, prefix with the tree (e.g. `<docsDir>/packages-<pkg>-foo.html`) rather than overwriting.
      - Never flatten everything to a single directory and never leave converted HTML scattered at the repo root or inside source trees.
    - Preserve info and apply the style and visual-first rules.
