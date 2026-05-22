@@ -71,7 +71,7 @@ Walk in-scope files and collect findings under six buckets (a–e, plus P for an
 
 **b. Legacy patterns.** Language-specific modernizations. Non-exhaustive starters:
 - Go: `interface{}` → `any`; manual loops `slices`/`maps` covers; `ioutil` → `io`/`os`; superfluous nil checks. **Do not** switch `fmt.Errorf` between `%v`/`%s` and `%w` — that changes whether `errors.Is`/`errors.As` traverses the chain, which is observable behavior.
-- JS/TS: `var` → `const`/`let`; `.then` chains that read better as `async/await`; `Object.assign({}, x)` → `{...x}`; manual loops `.map`/`.filter`/`.reduce` cover; CommonJS `require` in ESM repos.
+- JS/TS: `Object.assign({}, x)` → `{...x}`; manual loops `.map`/`.filter`/`.reduce` cover; CommonJS `require` in ESM repos. **Do not** blanket-swap `var` → `const`/`let` — function scope vs block scope, hoisting, TDZ, and per-iteration loop bindings all differ. Only propose the swap on a `var` that's provably used in one block, never referenced before its declaration, and not captured in a loop closure. Same caution for converting `.then` chains to `async/await`: ordering of microtasks and unhandled-rejection behavior can shift; only propose when the chain has no concurrent branches and rejection handling is straight-through.
 - Python: `%` formatting / `.format` → f-strings; `range(len(x))` → `enumerate`; `dict.keys()` inside `in`; `os.path` → `pathlib` in new code.
 - General: dead feature flags, dead env-var branches, `TODO`s older than the last release.
 
