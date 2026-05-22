@@ -63,3 +63,4 @@ What it does:
 | Skill | Description |
 |---|---|
 | `timb-handoff-and-follow-up` | End-of-session workflow: align docs/TODO markdown against the diff, then write prompts for one or more independent follow-up agents. Aliases: `handoff`, `handoff-and-follow-up`. |
+| `timb-trim` | Code quality + line-count pass over the whole codebase or the diff vs main. Writes a findings report, gates refactors on real test coverage, implements after approval, deletes the report. Aliases: `trim`, `reduce`, `simplify-review`. |
