@@ -4,13 +4,16 @@ description: >-
   Write and maintain in-repo docs. Use when creating a new HTML doc under
   `docs/` (brief, guide, explainer, architecture, design notes, internal
   reference), creating a new package/subfolder README, converting markdown to
-  HTML, or sweeping an existing repo's docs into shape. Triggers on "write
-  docs," "update the docs," "align the docs," "explain X in a doc,"
-  "architecture doc," "add a README for this package," "doc this." Two flows:
-  authoring a single doc, and an alignment sweep across the whole repo. Do NOT
-  invoke for ordinary edits to existing markdown (TODO/CHANGELOG/AGENTS/CLAUDE
-  and any `.md` consumed as page content stay as they are) — only invoke on
-  creation, conversion, or an explicit sweep.
+  HTML, or running a structural docs sweep across the repo. Triggers on
+  "write docs," "structural docs sweep," "convert docs to HTML," "explain X
+  in a doc," "architecture doc," "add a README for this package," "doc
+  this," "sweep the docs." Two flows: authoring a single doc, and a
+  structural sweep that converts markdown to HTML and adds missing READMEs.
+  Do NOT invoke for ordinary edits to existing markdown
+  (TODO/CHANGELOG/AGENTS/CLAUDE/design.md and any `.md` consumed as page
+  content stay as they are). Do NOT use for end-of-session diff syncs against
+  main — that is `timb-handoff-and-follow-up`'s job, even when phrased as
+  "align the docs."
 ---
 
 # Timb In-Repo Docs
@@ -27,11 +30,13 @@ HTML in `docs/` (or whatever `docsDir` `design.md` declares):
 
 Markdown, untouched:
 
-- `todo.md`, `TODO.md`, `TODOS.md`, `PLAN.md` — TODOs stay markdown.
-- `README.md` at repo root and in every package / major subfolder.
-- `CHANGELOG.md`, `LICENSE`, `CONTRIBUTING.md`, `AGENTS.md`, `CLAUDE.md`.
-- `design.md` (and `docs/design.md`) — this skill *reads* `design.md`; it must never convert, rename, or delete it.
+- Any file matching (case-insensitive) `todo.md`, `todos.md`, `plan.md`, `plans.md`, `roadmap.md` — TODO/plan tracking stays markdown.
+- `README.md` (any case) at repo root and in every package / major subfolder.
+- `CHANGELOG.md`, `CHANGES.md`, `HISTORY.md`, `NEWS.md`, `LICENSE`, `LICENCE`, `LICENSE.md`, `LICENCE.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, `SUPPORT.md`, `GOVERNANCE.md`, `AUTHORS.md`, `MAINTAINERS.md`, `AGENTS.md`, `CLAUDE.md` — all case-insensitive.
+- `design.md` and any `design.md` under `<docsDir>` — this skill *reads* `design.md`; it must never convert, rename, or delete it.
 - Any `.md` file consumed as page content (MDX imports, content collections, docs sites). Detect before touching.
+
+Match the protected list case-insensitively (`README.MD`, `Todo.md`, and `readme.md` are all protected). When in doubt about whether a file is protected, treat it as protected and ask.
 
 ### Consumer check — mandatory before converting any `.md` to HTML
 
@@ -134,7 +139,7 @@ For `todo.md` / `TODO.md` / `TODOS.md` / `PLAN.md`:
 
 ## Flow A — authoring a single new/edited doc
 
-1. Determine the doc kind. TODO / README / CHANGELOG / AGENTS / CLAUDE / `design.md` → markdown. Otherwise HTML in `<docsDir>`.
+1. Determine the doc kind. Any file in the protected list above (TODO / PLAN / README / CHANGELOG / LICENSE / CONTRIBUTING / CODE_OF_CONDUCT / SECURITY / AGENTS / CLAUDE / `design.md` / etc., case-insensitive) → markdown. Otherwise HTML in `<docsDir>`.
 2. Read `design.md` (repo root, or `<docsDir>/design.md`) to resolve `<docsDir>` and the HTML mode. If absent, report and fall back to defaults (`<docsDir>` = `docs/`, single-file self-contained, plain palette).
 3. If editing an existing `.md` that should be HTML, run the consumer check first. If consumed as content, keep it markdown and note it.
 4. Write the doc following the style and visual-first rules. Add `id` anchors on headings. Discover sibling docs with a recursive listing of `<docsDir>` (e.g. `find <docsDir> -name '*.html'`). Any link to another doc in this repo points to `.html`, never `.md` (unless that target is a content-consumed `.md` per the consumer check).
@@ -146,16 +151,17 @@ For `todo.md` / `TODO.md` / `TODOS.md` / `PLAN.md`:
 
 1. **Clean tree.** Confirm `git status` is clean (or only contains changes the user explicitly told you about). Flow B mutates and deletes files — uncommitted hand-edits could be lost. If the tree is dirty, stop and ask.
 2. **Read `design.md`.** Resolve `<docsDir>` and HTML mode. If absent, report it, suggest `/design-consultation`, and fall back to defaults (`<docsDir>` = `docs/`, single-file self-contained, plain palette) — do **not** halt the sweep. Halting is only for a dirty tree (step 1).
-3. **Inventory.** List every `.md` in the repo and every existing file under `<docsDir>` (recursive). Note which `.md` files are content-consumed (consumer check + framework patterns above) and which are in the protected list (`README.md`, `TODO*.md`, `CHANGELOG.md`, `LICENSE`, `CONTRIBUTING.md`, `AGENTS.md`, `CLAUDE.md`, `design.md`).
-4. **Convert (one commit per file).** For each `.md` that should be HTML and isn't consumed or protected:
+3. **Inventory.** List every tracked `.md` in the repo and every existing file under `<docsDir>` (recursive). **Exclude** anything inside `node_modules/`, `.git/`, `vendor/`, `third_party/`, `dist/`, `build/`, `out/`, `target/`, `.next/`, `.nuxt/`, `.svelte-kit/`, `.cache/`, `coverage/`, or any path listed in `.gitignore`. Use `git ls-files '*.md'` as the canonical inventory source — it already respects gitignore and excludes vendored/build trees. Note which `.md` files are content-consumed (consumer check + framework patterns above) and which are in the protected list (case-insensitive match against the full protected set above).
+4. **CMS gate.** Run the consumer check on the full inventory and detect any content systems wired into the repo (`next-mdx`, `contentlayer`, `velite`, `astro:content`, `docusaurus`, `vitepress`, `nextra`, `mdx-bundler`, `gatsby-*-md*`, framework `content/`/`posts/` with frontmatter, MD→RSS, GitHub Pages, Read the Docs). If **any** content system is present, stop and ask the user once: list every `.md` you intend to convert and the systems detected, and proceed only with the user's explicit go-ahead (per-file or blanket). If no content system is present, continue without a prompt.
+5. **Convert (one commit per file).** For each `.md` that should be HTML and isn't consumed or protected:
    - Convert to HTML and place the result under `<docsDir>` (preserving any meaningful sub-path under `<docsDir>`, e.g. `<docsDir>/architecture/overview.html` for `architecture/overview.md`). Never leave converted HTML scattered at the repo root.
    - Preserve info and apply the style and visual-first rules.
    - Rewrite every in-doc link from `*.md` → the new `.html` location, except links pointing to content-consumed markdown files (those keep `.md`).
    - Update any other files in the repo that referenced the old `.md` path.
    - Stage the new `.html`, the link updates, and the `.md` deletion as a **single commit per converted file** so each conversion is trivially revertable. Don't bundle multiple conversions into one commit.
-5. **READMEs.** For each subfolder/package missing a README, draft one from the code.
-6. **TODOs.** Run TODO compaction on every TODO/PLAN file.
-7. **Index.** Verify `<docsDir>/index.html` exists and the agent-generated region (between the markers) links every HTML doc under `<docsDir>` (recursive, excluding `index.html` itself), grouped by kind.
-8. **Report.** Summarize: converted, created, left-as-markdown (with reason), READMEs added, TODOs compacted, anything that needs human input.
+6. **READMEs.** For each subfolder/package missing a README, draft one from the code.
+7. **TODOs.** Run TODO compaction on every TODO/PLAN file.
+8. **Index.** Verify `<docsDir>/index.html` exists and the agent-generated region (between the markers) links every HTML doc under `<docsDir>` (recursive, excluding `index.html` itself), grouped by kind.
+9. **Report.** Summarize: converted, created, left-as-markdown (with reason), READMEs added, TODOs compacted, anything that needs human input.
 
 End with one line: what changed, what's outstanding, any human decisions needed.
