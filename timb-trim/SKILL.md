@@ -35,7 +35,11 @@ Run in order.
 
 Ask via AskUserQuestion:
 
-- `Diff vs default branch` (recommended) — files touched on this branch + uncommitted from `git status`. Detect the default branch first: `git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@'`; fall back to whichever of `main`, `master`, `trunk`, `develop` exists as `origin/<name>`. Then diff with `git diff --name-only origin/<default>...HEAD`. Do not hardcode `main`.
+- `Diff vs default branch` (recommended) — files touched on this branch + uncommitted from `git status`. Detect and refresh first:
+  1. Detect default branch name: `git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@'`; if that fails, pick the first of `main`, `master`, `trunk`, `develop` that resolves (try `origin/<name>` first, then plain `<name>`).
+  2. If an `origin` remote exists, refresh it: `git fetch origin <default> --quiet`. Skip silently if `origin` is missing or offline.
+  3. Pick the diff base: `origin/<default>` if it exists, otherwise the local `<default>` ref. Run `git diff --name-only <base>...HEAD`.
+  4. If none of the candidates resolve, stop and ask the user for the base branch name. Do not hardcode `main`.
 - `Whole codebase` — every source file the repo's ignore rules permit.
 
 **Always exclude**, from either scope (diff or whole codebase):
