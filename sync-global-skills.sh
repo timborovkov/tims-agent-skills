@@ -154,7 +154,15 @@ sync_one() {
     entry="${root}/${name}"
 
     if [[ -L "${entry}" ]]; then
-      current="$(real_path "${entry}")"
+      if ! current="$(real_path "${entry}" 2>/dev/null)"; then
+        echo "fix broken symlink: ${entry} -> ${original}"
+        if [[ ${apply} -eq 1 ]]; then
+          rm "${entry}"
+          ln -s "${original}" "${entry}"
+        fi
+        fixed=$((fixed + 1))
+        continue
+      fi
       if [[ "${current}" == "${original}" ]]; then
         ok=$((ok + 1))
         continue
