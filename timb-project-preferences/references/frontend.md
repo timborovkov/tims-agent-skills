@@ -1,0 +1,12 @@
+# Frontend Preferences
+
+- Next.js with App Router.
+- Run `react-doctor` for Next.js/React projects when reviewing or improving codebase health, performance, security, correctness, or architecture.
+- TypeScript for all app and component code. Prefer `.tsx` for React components and `.ts` for utilities, route handlers, server actions, config, tests, and scripts.
+- Keep strict TypeScript settings on. Do not loosen `strict`, `noImplicitAny`, or related checks to make code pass.
+- Tailwind CSS and shadcn/ui for UI primitives, including modals, popovers, buttons, menus, form controls, and dialogs.
+- No custom one-off component primitives when shadcn/ui fits.
+- Proper loading, empty, pending, optimistic, success, and error states.
+- i13n/i18n by default: no hardcoded user-facing strings in app code when the project has or should have a message/catalog system.
+- React Query where reasonable for client/server state, especially caching, invalidation, optimistic updates, and mutation status.
+- Vitest for unit/component tests unless the repo has a stronger existing choice.

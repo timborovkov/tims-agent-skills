@@ -1,0 +1,21 @@
+# Repo Structure Preferences
+
+- Monorepo using pnpm workspaces and Turbo.
+- TypeScript only for JavaScript-family code. Do not create pure `.js`/`.jsx` app, package, config, or script code when a TypeScript option is available; use `.ts`/`.tsx` and typed config files. Keep unavoidable runtime JS wrappers tiny and justified.
+- Pin Node.js v24 in `.nvmrc`, `package.json` engines, CI, Docker, and deployment config where applicable.
+- Package manager: pnpm.
+- Standard commands:
+  - `pnpm validate` runs the full local gate.
+  - `pnpm test` runs tests.
+  - Include focused commands for lint, format/prettier check, typecheck, build, and any app-specific checks.
+- Strict lint rules by default. Use a real ESLint setup for TypeScript/React/Next.js, fail CI on lint errors, avoid warning-only drift, and add narrowly-scoped disables only with a reason.
+- Prettier is enforced. Include config, ignore file, a check command in `pnpm validate`, and an optional write command for local formatting.
+- GitHub Actions for CI. CI should run install with lockfile enforcement, lint, Prettier check, typecheck/compile, tests, and build when applicable, using the same validation commands developers run locally.
+- `AGENTS.md` for agent instructions.
+- `CLAUDE.md` as an alias or near-identical companion to `AGENTS.md`, including the general contribution workflow.
+- `CONTRIBUTING.md` with setup, commands, branch/PR expectations, validation, CI, review response, docs/TODO rules, and release/deploy notes.
+- `design.md` for product/design system direction.
+- `docs/` for HTML docs when writing briefs, guides, explainers, architecture, or internal references.
+- `TODO.md` with clear open sections and compact/collapsed done items.
+- Root `README.md` is mandatory and should outline the project structure, apps/packages, common commands, local setup, environment handling, docs entry points, deployment shape, and contribution flow.
+- Proper `.gitignore` for the stack and local agent state. Ignore generated/build/cache outputs, secrets, logs, local database/storage files, and tool worktrees/state such as `.claude/`, `.codex/`, `.cursor/`, `.opencode/`, `worktrees/`, and `.worktrees/` unless the repo intentionally tracks a specific config file.

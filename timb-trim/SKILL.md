@@ -1,181 +1,37 @@
 ---
 name: timb-trim
 description: >-
-  Review code for line-count reduction and quality improvements: compress
-  verbose comments, replace legacy patterns (Go `interface{}` → `any`, old loop
-  idioms, etc.), remove dead code, surface duplication, and simplify logic
-  without changing behavior. Prompts whether to scope to the whole codebase or
-  just the current diff vs the default branch. Writes findings to a markdown
-  report, asks for
-  approval, implements approved changes only after verifying real test coverage
-  exists, then deletes the report. Use for "trim the code," "reduce line
-  count," "simplify," "code quality pass," "modernize patterns." Skip for
-  targeted bug fixes or new feature work.
+  Reviews code for behavior-preserving line-count reduction and quality
+  improvements: verbose comments, legacy patterns, dead private code,
+  duplication, and logic simplification. Use when the user says "trim the
+  code," "reduce line count," "simplify," "code quality pass," or "modernize
+  patterns." Skip targeted bug fixes, new feature work, and public API changes
+  unless the user explicitly opts in.
 ---
 
 # Timb Trim
 
-Two-phase: read-only findings → user-approved implementation. Never refactor without verifying real test coverage first.
+Two-phase: read-only findings, then user-approved implementation. Never refactor without verifying meaningful test coverage for risky changes.
 
-Run in order.
+## Quick Start
 
-## Non-negotiables
+1. Ask whether to review the current diff vs default branch or the whole codebase.
+2. Build the in-scope file list, excluding generated files, vendor/build output, lockfiles, and agent state.
+3. Learn the stack from manifests. Fetch current docs only when a finding touches a third-party API.
+4. Collect findings under: comments, legacy patterns, dead private code, duplication, simplification, and public-surface risks.
+5. Gate risky findings on real tests, not tautological mocks.
+6. Write a markdown findings report and ask the user what to implement.
+7. Implement approved findings only, lowest risk first. Add missing tests first when needed.
+8. Run repo verification gates, delete the report, and summarize shipped/skipped findings.
 
-- **No behavior changes.** Every refactor must be observably equivalent to what shipped before. If a finding can't be done without changing behavior, drop it.
-- **No compatibility shims.** When a refactor renames a function/type/field/flag, update every consumer in the same commit. Do not keep the old name as an alias, re-export, deprecated wrapper, or `// renamed from X` comment. If a consumer is out of repo, the rename is out of scope — skip the finding.
-- **Public API stays public.** Anything exported across a package/module boundary that external code could depend on is off-limits for **renames, removal, or signature changes** (narrowing parameters, changing return types, removing exports treated as "dead") unless the user explicitly opts in for that finding. A symbol with no in-repo callers can still have out-of-repo callers — "dead" inside the repo is not dead in the world. How to decide what's public, by language:
-  - Go: capitalized identifiers in any package that isn't under `internal/`.
-  - TS/JS: anything re-exported from the package entrypoint (`main` / `module` / `exports` in `package.json`), or listed in a `index.ts` barrel that consumers import.
-  - Python: top-level names not prefixed with `_`, plus anything in `__all__`.
-  - Rust: `pub` items in non-test, non-`#[doc(hidden)]` modules.
-  - Ruby: any non-`private`/`protected` method on a class/module the gem's `lib/` exposes.
-  When in doubt, treat it as public.
+## Non-Negotiables
 
-## 1. Pick scope
+- No behavior changes.
+- No compatibility shims for internal renames; update all in-repo consumers instead.
+- Treat public exports as public even when there are no in-repo callers. Public-surface findings require explicit per-item opt-in.
+- One commit per approved finding when committing.
+- If verification is already red on the base branch, stop and surface that before refactoring.
 
-Ask via AskUserQuestion:
+## Detailed Rules
 
-- `Diff vs default branch` (recommended) — files touched on this branch + uncommitted from `git status`. Detect and refresh first:
-  1. Detect default branch name: `git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@'`; if that fails, pick the first of `main`, `master`, `trunk`, `develop` that resolves (try `origin/<name>` first, then plain `<name>`).
-  2. If an `origin` remote exists, refresh it: `git fetch origin <default> --quiet`. Skip silently if `origin` is missing or offline.
-  3. Pick the diff base: `origin/<default>` if it exists, otherwise the local `<default>` ref. The in-scope set is the **union** of:
-     - committed branch changes: `git diff --name-only <base>...HEAD`
-     - unstaged + staged working-tree changes: `git diff --name-only HEAD`
-     - untracked files git knows about: `git ls-files --others --exclude-standard`
-     Deduplicate the union.
-  4. If none of the candidates resolve, stop and ask the user for the base branch name. Do not hardcode `main`.
-- `Whole codebase` — every source file the repo's ignore rules permit.
-
-**Always exclude**, from either scope (diff or whole codebase):
-
-- `vendor/`, `third_party/`, `node_modules/` (even if checked in)
-- `dist/`, `build/`, `out/`, `target/`, `.next/`, `coverage/`
-- `.claude/`, `.cursor/`, `.codex/` (skill state, prior trim reports, agent config — never trim our own report)
-- Generated files by pattern: `*.gen.*`, `*.pb.*`, `*_pb2.py`, `*.min.*`
-- Specific lockfiles by exact name: `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`, `Cargo.lock`, `go.sum`, `Gemfile.lock`, `poetry.lock`, `composer.lock`. (Do not glob `*-lock.*` — it matches legit source like `foo-lock.go`.)
-- Any file whose first 10 lines contain a generator header like `Code generated by … DO NOT EDIT`, `@generated`, or `AUTO-GENERATED`.
-
-**Prune the file list against the exclude rules before continuing.** From here on, "in scope" means the pruned list. Print the excluded count so the user sees what was dropped.
-
-## 2. Learn the stack
-
-Glob manifests once to know the languages: `go.mod`, `package.json`, `pyproject.toml`, `Cargo.toml`, `Gemfile`, `composer.json`, `*.csproj`. Note the major frameworks. Do **not** fetch docs yet — only when a specific finding involves a third-party API.
-
-When a finding does touch a third-party library, invoke `/find-docs` (or fall back to `npx ctx7@latest`) before proposing the change. Per the user's global `context7.md` rule: do this even for libraries you think you know.
-
-## 3. Findings pass (read-only)
-
-Walk in-scope files and collect findings under six buckets (a–e, plus P for anything touching public surface):
-
-**a. Verbose comments.** Multi-line comments that restate the code or wander. Keep the WHY (constraints, invariants, gotchas); drop narration. Block comments that could be one line, or removed entirely.
-
-**b. Legacy patterns.** Language-specific modernizations. Non-exhaustive starters:
-- Go: `interface{}` → `any`; manual loops `slices`/`maps` covers; `ioutil` → `io`/`os`; superfluous nil checks. **Do not** switch `fmt.Errorf` between `%v`/`%s` and `%w` — that changes whether `errors.Is`/`errors.As` traverses the chain, which is observable behavior.
-- JS/TS: `Object.assign({}, x)` → `{...x}`; manual loops `.map`/`.filter`/`.reduce` cover; CommonJS `require` in ESM repos. **Do not** blanket-swap `var` → `const`/`let` — function scope vs block scope, hoisting, TDZ, and per-iteration loop bindings all differ. Only propose the swap on a `var` that's provably used in one block, never referenced before its declaration, and not captured in a loop closure. Same caution for converting `.then` chains to `async/await`: ordering of microtasks and unhandled-rejection behavior can shift; only propose when the chain has no concurrent branches and rejection handling is straight-through.
-- Python: `%` formatting / `.format` → f-strings; `range(len(x))` → `enumerate`; `dict.keys()` inside `in`; `os.path` → `pathlib` in new code.
-- General: dead feature flags, dead env-var branches, `TODO`s older than the last release.
-
-**c. Dead code.** Unused imports, unreachable branches, commented-out blocks, never-called **private/internal** methods. Cross-check with `grep`/LSP before flagging — fewer false positives than guessing. **Unreferenced public exports do NOT belong here** — route them through bucket `P` (below); out-of-repo consumers may depend on them.
-
-**d. Duplication & reuse.** Near-duplicate blocks that should share a helper; helpers that already exist but aren't being used. Cite both sites with `file:line`. Prefer reusing existing code over creating new abstractions.
-
-**e. Logic simplification.** Flattening nested conditionals, redundant null checks, early returns, boolean expressions that reduce. Must be behavior-preserving — if you're unsure, mark risk higher and surface it.
-
-**P. Public-surface changes.** Any finding from buckets a–e that touches a symbol classified as public per the non-negotiable (see top of file) moves into bucket `P` instead, regardless of its original bucket. This includes: renames, removals (including "dead" exports nobody in-repo calls), signature changes, and behavior-preserving refactors that alter the exported symbol's shape. `P` findings require individual opt-in — they are excluded from the `all` approval (see Step 5).
-
-For every finding capture:
-
-```
-- where:    path/to/file.ext:LINE_START-LINE_END
-- bucket:   a|b|c|d|e|P
-- current:  N lines
-- proposed: M lines  (delta: -K)
-- why:      one line
-- risk:     none | low | med | high
-- snippet:  before/after, short
-```
-
-## 4. Test-coverage gate
-
-For every finding with risk above `none`:
-
-1. Find the tests. Grep test files for the symbol; respect the repo's naming (`*_test.go`, `*.test.ts`, `test_*.py`, `*_spec.rb`).
-2. **Judge quality, not presence.** A test that configures a mock to return `X` and asserts `X` came back is tautology, not coverage. Real coverage exercises behavior: meaningful inputs in, real outputs/side-effects asserted, branches hit.
-3. If coverage is missing or tautological, mark the finding `needs-tests-first` and write down *what the missing test should assert* — concrete inputs and expected outputs/side-effects. Implementation will write those tests first.
-
-Findings with risk `none` (pure comment trims, obvious dead imports, `interface{}` → `any`) skip this gate.
-
-## 5. Write the report
-
-Default path: `<repo>/.claude/trim-report-<YYYY-MM-DD>.md`. If `.claude/` is gitignored or missing, use `~/.claude/trim-reports/<repo>-<YYYY-MM-DD>.md`.
-
-```markdown
-# Trim report — <repo> — <date>
-
-Scope: <diff vs <default-branch> | whole codebase>
-Files reviewed: <count>
-Estimated line reduction: <N> (forecast — actuals reported on cleanup)
-
-## Public API changes (require individual confirmation)
-
-> Findings here are NOT covered by the `all` approval. Each must be picked
-> explicitly in `select`, or they are skipped.
-
-### P1. <short title> — risk: <…> — touches public surface
-- Where: `path/file.ext:42-58`
-- Public symbol: `pkg.OldName` → `pkg.NewName`
-- Consumers in repo that get rewritten: <count, paths>
-- (rest of finding fields as below)
-
-## Findings
-
-### 1. <short title> — <bucket> — risk: <none|low|med|high>
-- Where: `path/file.ext:42-58`
-- Current: N. Proposed: M. Delta: -K.
-- Why: <one line>
-- Tests: <ok | needs-tests-first: "assert that …">
-- Before/after:
-  ```<lang>
-  // before
-  …
-  // after
-  …
-  ```
-
-### 2. …
-```
-
-Print the path, the totals, and a one-line summary per finding. Then ask via AskUserQuestion how to proceed:
-
-- `all` — implement every regular finding. **Does not include `P*` public-API findings** — those are always opt-in per finding.
-- `select` — user picks finding numbers (including any `P*` items they want).
-- `none` — stop; leave report for review.
-
-If there are `P*` items and the user picked `all`, follow up with a second prompt listing the `P*` items individually so each can be approved or skipped on its own.
-
-## 6. Implement (only if approved)
-
-Order: lowest risk first. For each approved finding:
-
-1. If `needs-tests-first`: write the missing test(s). Run them; confirm they pass against the **current** code. If they don't, the test is wrong or your understanding of behavior is wrong — fix that before refactoring.
-2. Apply the refactor.
-3. Run the project verification gates per `AGENTS.md` / `CLAUDE.md` (tests, lint, typecheck). Fix reds before moving on.
-4. **One commit per finding** so each change is bisectable. Message format: `trim(<bucket>): <short title>`. The report file is deleted at the end, so don't reference its section numbers in commit messages — make the title self-describing.
-
-If a finding fails and can't be salvaged in a few minutes, revert just that one and continue with the rest. Note which findings were skipped in the final summary.
-
-## 7. Cleanup
-
-After all approved findings landed and verification is green, delete the report file. Print:
-
-```
-Trimmed <N> lines across <M> files. <K> findings shipped, <S> skipped. Report deleted.
-```
-
-If any findings were skipped, list them by title in one line each so the user can decide whether to revisit.
-
-## Skip conditions
-
-- The user asked for a targeted bug fix or a new feature — use the appropriate skill, not this one.
-- The branch has uncommitted unrelated work that would get mixed into trim commits — ask the user to stash or commit first.
-- Verification gates are already red on the base branch — stop and surface that; don't bury it under trim commits.
+Read [references/trim-detail.md](references/trim-detail.md) before producing findings or editing code. It contains scope detection, exclusion rules, finding buckets, report format, approval handling, and cleanup rules.

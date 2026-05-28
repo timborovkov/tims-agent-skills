@@ -1,0 +1,4 @@
+upstream-sync
+sync-upstream
+merge-upstream
+rebase-upstream
