@@ -68,12 +68,13 @@ Before using library/framework-specific APIs, fetch current docs according to th
 - RustFS for S3-compatible bucket storage by default.
 - Zod-based env loader that validates and types env at process startup.
 - Sentry for error reporting.
-- A reset script that can clear object storage, vectors, database state, run migrations, and seed when seed data exists. Make destructive behavior explicit and gated.
+- A `pnpm dev:wipe` script that can clear object storage, vectors, database state, run migrations, and seed when seed data exists. It must hard-fail unless `ALLOW_DESTRUCTIVE_DEV_WIPE=true` and `NODE_ENV` is non-production. Example local invocation: `ALLOW_DESTRUCTIVE_DEV_WIPE=true NODE_ENV=development pnpm dev:wipe`.
 
 ## Deployment and operations
 
 - Railway for deployment by default.
 - Include proper `railway.json` files for each deployable service/app.
+- For Railway-hosted dev/staging wipes, document the flow: `railway login`, `railway link` for the web app, `railway ssh`, then run `ALLOW_DESTRUCTIVE_DEV_WIPE=true NODE_ENV=development pnpm dev:wipe` inside the shell.
 - Docker and `docker-compose.yml` for local dependencies and reproducible app/service runs.
 - GitHub Actions should validate, test, and build before merge.
 - Deployment config should match local commands and pinned runtime versions.
