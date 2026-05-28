@@ -1,18 +1,18 @@
 ---
 name: timb-upstream-sync
 description: >-
-  Safely sync a feature branch with upstream/default branch using merge or
-  rebase while preserving all intended work on both sides. Use for "rebase on
-  main," "merge upstream," "sync with main," "resolve conflicts," "update this
-  PR from upstream," or when upstream has landed related behavior that the
-  current branch must semantically incorporate. Goes beyond mechanical conflict
-  resolution: validates behavior, updates tests/docs/TODOs, and pushes the
-  result. Skip for unrelated ordinary feature work.
+  Safely syncs a feature branch with upstream/default branch using rebase or
+  merge, resolves conflicts, validates, tests, and ensures desired changes from
+  upstream PRs and the current PR all persist and are fully implemented in the
+  combined version. Use for "rebase on main," "merge upstream," "sync with
+  main," "resolve conflicts," "update this PR from upstream," or when upstream
+  landed related behavior that the current branch must incorporate. Skip for
+  unrelated ordinary feature work.
 ---
 
 # Timb Upstream Sync
 
-Purpose: integrate upstream without losing intent. A green merge that drops a requirement is a failed merge.
+Purpose: integrate upstream without losing intent. A green merge that drops or half-implements a requirement from either side is a failed merge.
 
 Run in order.
 
@@ -22,12 +22,12 @@ Run in order.
 - Detect the default branch:
   `git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@'`, falling back to the first existing `main`, `master`, `trunk`, or `develop`.
 - Fetch the relevant remote when available.
-- Identify the branch's intended work:
+- Identify the current PR/branch's desired changes:
   - `git diff --stat <base>...HEAD`
   - `git log --oneline --decorate <base>..HEAD`
   - changed tests/docs/TODOs
   - issue/PR text if available locally or via `gh`
-- Identify upstream changes since the branch diverged:
+- Identify desired changes from PRs/commits merged upstream since the branch diverged:
   - `git log --oneline HEAD..<upstream>`
   - `git diff --name-status HEAD..<upstream>`
   - recent commits/PRs that touch the same files, domain terms, migrations, routes, schemas, copy, env, CI, or tests.
@@ -41,12 +41,14 @@ Run in order.
 
 ## 3. Resolve semantically
 
-For every conflict or overlapping upstream change, preserve both sides' intent.
+For every conflict or overlapping upstream change, preserve and fully implement both sides' intent in the combined version.
 
 - Do not choose ours/theirs wholesale unless the replaced side is truly obsolete.
 - Read nearby code and tests before editing.
 - If upstream introduced a cross-cutting requirement, apply it to this branch too. Example: if upstream implemented i13n/i18n, new UI text from this branch must use the same message/catalog pattern instead of hardcoded strings.
 - If upstream changed data shape, validation, permissions, env loading, model config, routes, copy conventions, loading states, or error handling, update this branch's new code to match.
+- Confirm the current PR's intended behavior still exists after the sync; do not let upstream changes erase or weaken it unless the user explicitly agrees the branch intent is obsolete.
+- Confirm upstream PR behavior is not only conflict-free but actually integrated with this branch's new code paths, tests, docs, and UI/API behavior.
 - Update tests to assert the integrated behavior, not just the old branch behavior.
 - Update docs/TODO/CHANGELOG when the merge changes project-facing state or closes/reopens work.
 
@@ -70,7 +72,9 @@ Fix failures caused by the sync. If a failure predates the sync, prove it with a
 
 - Inspect `git diff` and `git diff --check`.
 - Confirm no conflict markers remain.
-- Confirm intended branch changes still exist.
+- Confirm intended current-PR changes still exist and work.
+- Confirm desired upstream PR changes still exist and work.
+- Confirm the combined behavior is complete where the two sets of changes interact.
 - Confirm upstream requirements are applied to newly introduced code.
 - Confirm docs/TODOs are current if touched or affected.
 - Commit the merge/rebase result if needed using the repo's commit style.

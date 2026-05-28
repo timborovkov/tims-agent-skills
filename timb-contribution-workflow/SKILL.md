@@ -1,10 +1,10 @@
 ---
 name: timb-contribution-workflow
 description: >-
-  General contribution workflow for shipping changes: follow AGENTS/CLAUDE and
-  CONTRIBUTING guidance, write meaningful tests, run validation such as
-  `pnpm validate`, keep docs/TODOs current, push changes, monitor GitHub CI,
-  and respond to PR reviews or Cursor Bugbot comments by fixing or replying
+  Runs the general contribution workflow for shipping changes: follows
+  AGENTS/CLAUDE and CONTRIBUTING guidance, writes meaningful tests, validates
+  with `pnpm validate`, keeps docs/TODOs current, pushes changes, monitors GitHub CI,
+  and responds to PR reviews or Cursor Bugbot comments by fixing or replying
   concisely. Use for "ship this," "validate and push," "handle CI," "respond to
   review," "fix PR comments," "follow the contribution guide," or "finish the
   workflow." Skip for read-only review unless the user asks to act.

@@ -1,7 +1,7 @@
 ---
 name: timb-project-preferences
 description: >-
-  Apply Tim's default project setup preferences when creating, initializing, or
+  Applies Tim's default project setup preferences when creating, initializing, or
   standardizing a repo. Defaults include GitHub Actions, AGENTS/CLAUDE guidance,
   CONTRIBUTING/design docs, TODO structure, pnpm + Turbo monorepo, Next.js App
   Router, Node 24, Tailwind + shadcn/ui, Vitest, LangChain/LangGraph,
