@@ -5,12 +5,13 @@ description: >-
   standardizing a repo. Defaults include GitHub Actions, AGENTS/CLAUDE guidance,
   CONTRIBUTING/design docs, TODO structure, pnpm + Turbo monorepo, Next.js App
   Router, Node 24, Tailwind + shadcn/ui, Vitest, LangChain/LangGraph,
-  LangSmith, Vercel AI SDK UI, OpenRouter inference, Auth.js, Postgres,
-  Qdrant/pgvector, RustFS, Railway deployment, Docker Compose, zod env loader,
-  Sentry, React Query, model config files, reset scripts, and i13n/i18n by
-  default. Use for "set up the project," "standardize this repo," "apply my
-  defaults," "new app scaffold," or "repo preferences." Skip when maintaining
-  an established repo unless the user asks to migrate it.
+  LangSmith, Vercel AI SDK UI, OpenRouter inference, LangChain middleware,
+  Auth.js, Postgres, Qdrant/pgvector, RustFS, Railway deployment, Docker
+  Compose, zod env loader, Sentry, React Query, model config files, reset
+  scripts, and i13n/i18n by default. Use for "set up the project,"
+  "standardize this repo," "apply my defaults," "new app scaffold," or "repo
+  preferences." Skip when maintaining an established repo unless the user asks
+  to migrate it.
 ---
 
 # Timb Project Preferences
@@ -51,9 +52,10 @@ Before using library/framework-specific APIs, fetch current docs according to th
 ## AI and model defaults
 
 - LangChain and LangGraph for agent/workflow orchestration when useful.
+- Use LangChain middleware for agent cross-cutting concerns such as tool selection, human-in-the-loop approval/checkpoints, conversation summarization, guardrails, retries, tracing hooks, and context management.
 - LangSmith for tracing/evaluation when AI behavior needs observability.
 - Vercel AI SDK, including its UI utilities, for streaming/chat UI when appropriate.
-- OpenRouter for inference by default unless the project requires direct provider SDKs.
+- OpenRouter is the default inference gateway and model access layer unless the project explicitly requires direct provider SDKs.
 - Model definitions and model routing/config live in code as versioned config files, not in environment variables. Env vars should hold secrets and deployment-specific endpoints only.
 
 ## Backend and data defaults
