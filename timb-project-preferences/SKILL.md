@@ -35,6 +35,7 @@ Before using library/framework-specific APIs, fetch current docs according to th
 - `design.md` for product/design system direction.
 - `docs/` for HTML docs when writing briefs, guides, explainers, architecture, or internal references.
 - `TODO.md` with clear open sections and compact/collapsed done items.
+- Proper `.gitignore` for the stack and local agent state. Ignore generated/build/cache outputs, secrets, logs, local database/storage files, and tool worktrees/state such as `.claude/`, `.codex/`, `.cursor/`, `.opencode/`, `worktrees/`, and `.worktrees/` unless the repo intentionally tracks a specific config file.
 - Use `grill-with-docs` when domain language, product plan, or architecture direction is fuzzy enough to deserve interrogation before implementation.
 
 ## Frontend defaults
