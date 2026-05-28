@@ -5,6 +5,7 @@
 # Symlink targets:
 #   ~/.claude/skills/<skill-name-or-alias>          (Claude Code)
 #   ~/.cursor/skills/<skill-name-or-alias>          (Cursor)
+#   ~/.codex/skills/<skill-name-or-alias>           (Codex)
 #   ~/.config/opencode/skills/<skill-name-or-alias> (OpenCode)
 #
 # Idempotent: skipping skills already symlinked correctly. Re-run any time
@@ -18,6 +19,7 @@ SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGETS=(
   "${HOME}/.claude/skills"
   "${HOME}/.cursor/skills"
+  "${HOME}/.codex/skills"
   "${HOME}/.config/opencode/skills"
 )
 
