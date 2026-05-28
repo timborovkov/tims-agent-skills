@@ -90,3 +90,12 @@ Preview without changes:
 | `timb-project-preferences` | Default repo setup preferences: pnpm/Turbo, Next.js App Router, Node 24, Tailwind + shadcn/ui, Vitest, AI/data/deploy defaults, docs/TODO/contribution workflow, and i13n/i18n by default unless the project or user specifies otherwise. Aliases: `project-preferences`, `project-defaults`, `setup-preferences`, `repo-defaults`. |
 | `timb-trim` | Code quality + line-count pass over the whole codebase or the diff vs main. Writes a findings report, gates refactors on real test coverage, implements after approval, deletes the report. Aliases: `trim`, `reduce`, `simplify-review`. |
 | `timb-upstream-sync` | Merge/rebase from upstream safely while preserving both branch and upstream intent, resolving conflicts semantically, applying cross-cutting upstream requirements such as i13n/i18n to branch code, validating, updating docs/TODOs, and pushing. Aliases: `upstream-sync`, `sync-upstream`, `merge-upstream`, `rebase-upstream`. |
+
+## Recommended third-party skills
+
+These external skill packs pair well with this repo:
+
+- [garrytan/gstack](https://github.com/garrytan/gstack) — broad shipping, review, QA, browser, design, deploy, and project-memory workflows. Core skills to reach for often: `review` for pre-landing diff review, `ship` for PR creation and validation, `qa`/`qa-only` for browser QA, and `land-and-deploy` for post-merge deploy verification.
+- [millionco/react-doctor](https://github.com/millionco/react-doctor) — React and Next.js codebase health checks, performance review, security review, and architecture cleanup. Use alongside `timb-project-preferences` for Next.js projects.
+- [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) — Vercel/React/Next.js-oriented engineering skills and examples. Good source for frontend, composition, performance, and platform-specific agent guidance.
+- [mattpocock/skills](https://github.com/mattpocock/skills) — strong TypeScript and planning/documentation skills. Core skills to reach for often: `grill-with-docs` for interrogating plans against docs and domain language, plus TypeScript-focused review/refactor guidance.
