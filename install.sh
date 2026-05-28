@@ -9,7 +9,7 @@
 #   ~/.config/opencode/skills/<skill-name-or-alias> (OpenCode)
 #
 # Idempotent: skipping skills already symlinked correctly. Re-run any time
-# you add a new skill folder here to fan it out to all three tools.
+# you add a new skill folder here to fan it out to every configured tool.
 # Optional aliases: add one alias per line in <skill>/aliases.
 
 set -euo pipefail
