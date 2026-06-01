@@ -32,6 +32,8 @@ If `CLAUDE.md` and `AGENTS.md` both exist, treat them as the same class of agent
 
 Add or update tests when behavior changes.
 
+For substantial coverage work, test reviews, new test layers, E2E setup, CI test wiring, or AI/agent evals, route through `timb-test-strategy`.
+
 Good tests:
 
 - exercise behavior through the public or intended boundary
