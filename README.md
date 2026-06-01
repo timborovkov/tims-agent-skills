@@ -4,9 +4,10 @@ Personal AI skills, kept in one place and symlinked into every tool that uses
 them (Claude Code, Cursor, Codex, OpenCode). One source of truth, no copy-paste
 drift.
 
-Lives at `~/Desktop/Projects/personal-skills/` — but the install script
-resolves its own location, so the repo can move freely without breaking the
-links.
+Lives at `~/Desktop/Projects/personal-skills/`. The install script normally
+uses its own location, but if it is run from a disposable Codex worktree it
+falls back to the stable checkout so global skill links do not point at a
+worktree that may be deleted.
 
 ## Layout
 
@@ -32,6 +33,18 @@ markdown body). Extra files (scripts, templates) live next to it.
 
 Idempotent. Re-run after adding a new skill folder. Skips tools that aren't
 installed on this machine.
+
+If you intentionally want to install from a non-default checkout, set:
+
+```bash
+PERSONAL_SKILLS_SOURCE_DIR=/path/to/personal-skills ./install.sh
+```
+
+If you are deliberately testing from a Codex worktree, set:
+
+```bash
+PERSONAL_SKILLS_ALLOW_WORKTREE_SOURCE=1 ./install.sh
+```
 
 What it does:
 - Finds every `<name>/SKILL.md` in this directory
