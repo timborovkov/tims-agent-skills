@@ -17,6 +17,8 @@ Purpose: apply Tim's defaults when the user has not specified another stack. Exi
 
 Before using library/framework-specific APIs, fetch current docs according to the repo's doc-fetching rule, such as `ctx7`/Context7.
 
+Prefer the latest stable supported dependencies and current APIs by default. Do not introduce deprecated patterns when setting up or standardizing a project. For example, in Next.js 16 use `proxy.ts`/`proxy.js` and `proxy` exports instead of deprecated `middleware.ts`/`middleware.js` and `middleware` exports, unless the repo has a documented reason to keep the old convention.
+
 ## Quick Start
 
 1. Inventory existing conventions first.
@@ -43,6 +45,7 @@ Before using library/framework-specific APIs, fetch current docs according to th
 ## Skill Routing
 
 - Use `grill-with-docs` when domain language, product plan, or architecture direction is fuzzy enough to deserve interrogation before implementation.
+- Use `timb-test-strategy` when adding, reviewing, or standardizing unit, integration, API, DB, E2E, CI, or AI/agent eval test layers.
 - Use `timb-in-repo-docs` for substantial docs, HTML docs under `docs/`, package READMEs, markdown-to-HTML conversion, or docs sweeps.
 - Use `timb-contribution-workflow` when the task is to validate, test, push, monitor CI, or respond to reviews.
 - Use `timb-upstream-sync` when rebasing/merging upstream or resolving conflicts while preserving both upstream and current-PR intent.
