@@ -1,6 +1,6 @@
 # Optional Runtime Preferences
 
-Most projects should stay TypeScript/Next.js unless another runtime has a clear reason to exist. Go and Python are optional, not default.
+Most projects should stay TypeScript-first, with the frontend framework chosen by project shape. Lightweight frontends should usually use Vite with React; Next.js is still a good fit when its routing, SSR/RSC, server routes, SEO, or platform conventions are useful. Go and Python are optional, not default.
 
 ## Go
 

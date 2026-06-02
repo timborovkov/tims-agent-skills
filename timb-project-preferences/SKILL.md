@@ -2,7 +2,7 @@
 name: timb-project-preferences
 description: >-
   Applies Tim's default project setup preferences when creating, initializing,
-  or standardizing a repo. Covers repo shape, TypeScript/Next.js defaults,
+  or standardizing a repo. Covers repo shape, TypeScript/frontend defaults,
   optional Go/Python stacks, AI/model infrastructure, backend/data choices,
   product services, design quality, compliance, reliability/observability,
   deployment, docs, workflow, and i13n/i18n. Use for "set up the project,"
@@ -17,7 +17,7 @@ Purpose: apply Tim's defaults when the user has not specified another stack. Exi
 
 Before using library/framework-specific APIs, fetch current docs according to the repo's doc-fetching rule, such as `ctx7`/Context7.
 
-Prefer the latest stable supported dependencies and current APIs by default. Do not introduce deprecated patterns when setting up or standardizing a project. For example, in Next.js 16 use `proxy.ts`/`proxy.js` and `proxy` exports instead of deprecated `middleware.ts`/`middleware.js` and `middleware` exports, unless the repo has a documented reason to keep the old convention.
+Prefer the latest stable supported dependencies and current APIs by default. Do not introduce deprecated patterns when setting up or standardizing a project. Pick the frontend framework by project shape: lightweight frontends should usually use Vite with React, while Next.js remains appropriate when the app benefits from routing conventions, SSR/RSC, full-stack server routes, SEO-heavy pages, or platform integrations. For example, in Next.js 16 use `proxy.ts`/`proxy.js` and `proxy` exports instead of deprecated `middleware.ts`/`middleware.js` and `middleware` exports, unless the repo has a documented reason to keep the old convention.
 
 ## Quick Start
 
