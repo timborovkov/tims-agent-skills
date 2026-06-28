@@ -2,17 +2,17 @@
 name: timb-upstream-sync
 description: >-
   Safely syncs a feature branch with upstream/default branch using rebase or
-  merge, resolves conflicts, validates, tests, and ensures desired changes from
-  upstream PRs and the current PR all persist and are fully implemented in the
-  combined version. Use for "rebase on main," "merge upstream," "sync with
-  main," "resolve conflicts," "update this PR from upstream," or when upstream
-  landed related behavior that the current branch must incorporate. Skip for
-  unrelated ordinary feature work.
+  merge, resolves textual conflicts, preserves and implements the intent of
+  upstream changes and current-branch changes, validates, tests, and ensures
+  both sets of desired behavior persist in the combined version. Use for "rebase
+  on main," "merge upstream," "sync with main," "resolve conflicts," "update
+  this PR from upstream," or when upstream landed related behavior that the
+  current branch must incorporate. Skip for unrelated ordinary feature work.
 ---
 
 # Timb Upstream Sync
 
-Purpose: integrate upstream without losing intent. A green merge that drops or half-implements a requirement from either side is a failed merge.
+Purpose: integrate upstream without losing intent. This is not just conflict resolution: it is preserving and implementing the meaning of other changes alongside the current branch. A green merge that drops, ignores, or half-implements a requirement from either side is a failed merge.
 
 Run in order.
 
@@ -41,10 +41,11 @@ Run in order.
 
 ## 3. Resolve semantically
 
-For every conflict or overlapping upstream change, preserve and fully implement both sides' intent in the combined version.
+For every conflict or overlapping upstream change, preserve and fully implement both sides' intent in the combined version. Treat upstream changes as requirements to incorporate, not as text to work around.
 
 - Do not choose ours/theirs wholesale unless the replaced side is truly obsolete.
 - Read nearby code and tests before editing.
+- Look past conflict markers: inspect related upstream commits even when Git merges cleanly, because the branch may still need to adopt new patterns, invariants, migrations, UI copy, docs, or tests introduced upstream.
 - If upstream introduced a cross-cutting requirement, apply it to this branch too. Example: if upstream implemented i13n/i18n, new UI text from this branch must use the same message/catalog pattern instead of hardcoded strings.
 - If upstream changed data shape, validation, permissions, env loading, model config, routes, copy conventions, loading states, or error handling, update this branch's new code to match.
 - Confirm the current PR's intended behavior still exists after the sync; do not let upstream changes erase or weaken it unless the user explicitly agrees the branch intent is obsolete.
