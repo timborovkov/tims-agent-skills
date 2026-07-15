@@ -1,0 +1,4 @@
+interface:
+  display_name: "Timb Diff Review"
+  short_description: "High-signal branch and worktree diff reviews"
+  default_prompt: "Use $timb-diff-review to review my current branch and worktree against its default base branch."
