@@ -145,8 +145,9 @@ Order findings by severity, then confidence. Use this shape:
 ```
 
 Keep each finding self-contained and actionable. Use the line that best exposes
-the defect; prefer a changed line. If the host supports inline review comments,
-mirror main findings inline, but keep the final report complete on its own.
+the defect; prefer a changed line. If the host supports local, non-posting inline
+annotations, mirror main findings there, but keep the final report complete on
+its own. Never post remote review comments without a separate user request.
 
 If no reportable findings remain, say so directly. Do not claim the change is
 correct; state what was reviewed and any material residual risk. Do not include
