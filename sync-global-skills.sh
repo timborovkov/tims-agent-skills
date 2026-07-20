@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# sync-global-skills.sh — make Claude, Cursor, Codex, and OpenCode share skills.
+# sync-global-skills.sh — make Claude, Cursor, Codex, OpenCode, and Hermes share skills.
 #
 # For each skill name found in any configured skills directory, choose the
 # original directory and symlink the other tools to it. If a skill physically
@@ -15,6 +15,11 @@ ROOTS=(
   "${HOME}/.codex/skills"
   "${HOME}/.config/opencode/skills"
 )
+
+if [[ -d "${HOME}/.hermes" ]]; then
+  mkdir -p "${HOME}/.hermes/skills"
+  ROOTS+=("${HOME}/.hermes/skills")
+fi
 
 apply=1
 case "${1:-}" in
@@ -33,6 +38,7 @@ Discovers skill folders in:
   ~/.cursor/skills
   ~/.codex/skills
   ~/.config/opencode/skills
+  ~/.hermes/skills          (when ~/.hermes exists)
 
 For each skill name, finds one original directory and symlinks the other tool
 directories to it. Refuses to overwrite regular files or reconcile multiple

@@ -1,8 +1,8 @@
 # personal-skills
 
 Personal AI skills, kept in one place and symlinked into every tool that uses
-them (Claude Code, Cursor, Codex, OpenCode). One source of truth, no copy-paste
-drift.
+them (Claude Code, Cursor, Codex, OpenCode, Hermes). One source of truth, no
+copy-paste drift.
 
 Lives at `~/Desktop/Projects/personal-skills/`. The install script normally
 uses its own location, but if it is run from a disposable Codex worktree it
@@ -14,7 +14,7 @@ worktree that may be deleted.
 ```
 personal-skills/
 ├── install.sh            # symlink each skill into every configured tool dir
-├── sync-global-skills.sh # reconcile skills across Claude/Cursor/Codex/OpenCode
+├── sync-global-skills.sh # reconcile skills across Claude/Cursor/Codex/OpenCode/Hermes
 ├── timb-handoff-and-follow-up/
 │   ├── SKILL.md          # end-of-session handoff + follow-up workflow
 │   └── aliases           # optional legacy / short names
@@ -53,6 +53,7 @@ What it does:
   - `~/.cursor/skills/<name>`
   - `~/.codex/skills/<name>`
   - `~/.config/opencode/skills/<name>`
+  - `~/.hermes/skills/<name>` (only if `~/.hermes` exists)
 - Also creates aliases listed in `<name>/aliases` (one alias per line)
 - Fixes stale symlinks pointing at old locations
 - Leaves existing correct symlinks alone
@@ -66,10 +67,11 @@ What it does:
 
 Use this when a skill was created inside any one tool's skills directory and
 the other tools should point at the same original. The script scans Claude,
-Cursor, Codex, and OpenCode skill dirs, picks the real skill directory as the
-source, and symlinks the other locations to it. If all copies are already
-symlinks, it reuses the shared resolved target. It refuses ambiguous cases such
-as two different real directories for the same skill name.
+Cursor, Codex, OpenCode, and Hermes skill dirs, picks the real skill directory
+as the source, and symlinks the other locations to it. If all copies are
+already symlinks, it reuses the shared resolved target. It refuses ambiguous
+cases such as two different real directories for the same skill name. Hermes is
+included only when `~/.hermes` exists.
 
 Preview without changes:
 

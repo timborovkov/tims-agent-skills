@@ -9,6 +9,7 @@
 #   ~/.cursor/skills/<skill-name-or-alias>          (Cursor)
 #   ~/.codex/skills/<skill-name-or-alias>           (Codex)
 #   ~/.config/opencode/skills/<skill-name-or-alias> (OpenCode)
+#   ~/.hermes/skills/<skill-name-or-alias>          (Hermes, if ~/.hermes exists)
 #
 # Idempotent: skipping skills already symlinked correctly. Re-run any time
 # you add a new skill folder here to fan it out to every configured tool.
@@ -44,6 +45,11 @@ TARGETS=(
   "${HOME}/.codex/skills"
   "${HOME}/.config/opencode/skills"
 )
+
+if [[ -d "${HOME}/.hermes" ]]; then
+  mkdir -p "${HOME}/.hermes/skills"
+  TARGETS+=("${HOME}/.hermes/skills")
+fi
 
 if [[ ! -d "${SOURCE_DIR}" ]]; then
   echo "error: ${SOURCE_DIR} does not exist" >&2
