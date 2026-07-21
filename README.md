@@ -110,9 +110,24 @@ Preview without changes:
 
 ## Recommended third-party skills
 
-These external skill packs pair well with this repo:
+Install these globally with the Skills CLI. They are **not** vendored in this repo — keep them updated with `npx skills update`.
 
-- [garrytan/gstack](https://github.com/garrytan/gstack) — broad shipping, review, QA, browser, design, deploy, and project-memory workflows. Core skills to reach for often: `review` for pre-landing diff review, `ship` for PR creation and validation, `qa`/`qa-only` for browser QA, and `land-and-deploy` for post-merge deploy verification.
-- [millionco/react-doctor](https://github.com/millionco/react-doctor) — React and Next.js codebase health checks, performance review, security review, and architecture cleanup. Use alongside `timb-project-preferences` for Next.js projects.
-- [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) — Vercel/React/Next.js-oriented engineering skills and examples. Good source for frontend, composition, performance, and platform-specific agent guidance.
-- [mattpocock/skills](https://github.com/mattpocock/skills) — strong TypeScript and planning/documentation skills. Core skills to reach for often: `grill-with-docs` for interrogating plans against docs and domain language, plus TypeScript-focused review/refactor guidance.
+```bash
+npx skills add millionco/react-doctor -g -y
+npx skills add mattpocock/skills -g -y
+npx skills add railwayapp/railway-skills@use-railway -g -y
+npx skills add upstash/context7@find-docs -g -y
+npx skills add remotion-dev/skills -g -y
+npx skills add vercel-labs/agent-skills -g -y
+```
+
+| Package | Key skills |
+|---|---|
+| [millionco/react-doctor](https://github.com/millionco/react-doctor) | `react-doctor` — React/Next health scoring and cleanup. Pairs with `timb-project-preferences`. |
+| [mattpocock/skills](https://github.com/mattpocock/skills) | `grill-me`, `grill-with-docs`, `tdd`, `diagnose`, `prototype`, `to-prd`, `to-issues`, `triage`, `improve-codebase-architecture`, `setup-matt-pocock-skills`, `write-a-skill`. Matt's `handoff` overlaps naming with `timb-handoff-and-follow-up`. |
+| [railwayapp/railway-skills](https://github.com/railwayapp/railway-skills) | `use-railway` — Railway deploy/ops. |
+| [upstash/context7](https://github.com/upstash/context7) | `find-docs` — live library docs via Context7. |
+| [remotion-dev/skills](https://github.com/remotion-dev/skills) | `remotion-best-practices` — Remotion video-in-React. |
+| [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | `vercel-react-best-practices`, `vercel-composition-patterns`, `vercel-react-native-skills`, `web-design-guidelines`. |
+
+This repo's `timb-*` skills are installed with `./install.sh`, not `npx skills add`.
