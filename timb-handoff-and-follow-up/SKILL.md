@@ -29,7 +29,8 @@ Run in order.
 - Include TODO changes implied by recent merged PRs, not only the current branch.
 - Run project verification gates (tests, lint, typecheck - per AGENTS.md or CLAUDE.md). Fix reds before handoff.
 
-If `/document-release` is available and docs weren't updated this session, use it instead, then still check TODO/status markdown.
+If `timb-document-release` is available and docs were not refreshed this
+session, use it instead, then still check TODO/status markdown.
 
 **Skip** only if docs and TODOs are already aligned - confirm with `git status`, summarize, continue.
 
