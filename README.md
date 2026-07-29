@@ -114,6 +114,7 @@ Preview without changes:
 Install these globally with the Skills CLI. They are **not** vendored in this repo — keep them updated with `npx skills update`.
 
 ```bash
+npx skills add jakubkrehel/skills -g -y
 npx skills add millionco/react-doctor -g -y
 npx skills add mattpocock/skills -g -y
 npx skills add railwayapp/railway-skills@use-railway -g -y
@@ -124,6 +125,7 @@ npx skills add vercel-labs/agent-skills -g -y
 
 | Package | Key skills |
 |---|---|
+| [jakubkrehel/skills](https://github.com/jakubkrehel/skills) | `better-interface`, `better-ui`, `better-typography`, `better-colors`, `better-accessibility`, `better-layout`, `better-writing` — holistic interface review plus focused UI polish, typography, color, accessibility, layout, and product-writing guidance. |
 | [millionco/react-doctor](https://github.com/millionco/react-doctor) | `react-doctor` — React/Next health scoring and cleanup. Pairs with `timb-project-preferences`. |
 | [mattpocock/skills](https://github.com/mattpocock/skills) | `grill-me`, `grill-with-docs`, `tdd`, `diagnose`, `prototype`, `to-prd`, `to-issues`, `triage`, `improve-codebase-architecture`, `setup-matt-pocock-skills`, `write-a-skill`. Matt's `handoff` overlaps naming with `timb-handoff-and-follow-up`. |
 | [railwayapp/railway-skills](https://github.com/railwayapp/railway-skills) | `use-railway` — Railway deploy/ops. |
