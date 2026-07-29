@@ -1,6 +1,8 @@
 # Deployment And Operations Preferences
 
 - Railway for deployment by default.
+- Install the Railway CLI with agent support (`bash <(curl -fsSL https://railway.com/install.sh) --agents -y`) and keep the `use-railway` skill available. For an existing CLI installation, run `railway setup agent -y`.
+- Use Railway tooling for deploys and production operations, including status checks, build/runtime logs, metrics, variables, SSH, databases, domains, and service debugging.
 - Use Railpack for Railway deployments unless the project has a clear reason to use a custom Dockerfile/build path.
 - Include proper `railway.json` files for each deployable service/app.
 - For Railway-hosted dev/staging wipes, document the flow:

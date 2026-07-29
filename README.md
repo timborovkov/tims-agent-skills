@@ -109,26 +109,48 @@ Preview without changes:
 | `timb-trim` | Code quality + line-count pass over the whole codebase or the diff vs main. Writes a findings report, gates refactors on real test coverage, implements after approval, deletes the report. Aliases: `trim`, `reduce`, `simplify-review`. |
 | `timb-upstream-sync` | Merge/rebase from upstream safely while preserving both branch and upstream intent, resolving conflicts semantically, applying cross-cutting upstream requirements such as i13n/i18n to branch code, validating, updating docs/TODOs, and pushing. Aliases: `upstream-sync`, `sync-upstream`, `merge-upstream`, `rebase-upstream`. |
 
-## Recommended third-party skills
+## Recommended third-party tooling and skills
 
-Install these globally with the Skills CLI. They are **not** vendored in this repo — keep them updated with `npx skills update`.
+Railway is the default deployment and production-operations platform. Install
+the Railway CLI with agent support so coding agents can deploy, inspect status,
+read build and runtime logs, view metrics, manage configuration, use SSH, and
+debug services with the current `use-railway` skill and Railway MCP integration:
+
+```bash
+bash <(curl -fsSL https://railway.com/install.sh) --agents -y
+```
+
+If the CLI is already installed, add or refresh its agent tooling with:
+
+```bash
+railway setup agent -y
+```
+
+Install the remaining third-party skills globally with the Skills CLI. These
+skills are **not** vendored in this repo — keep them updated with
+`npx skills update`.
 
 ```bash
 npx skills add jakubkrehel/skills -g -y
 npx skills add millionco/react-doctor -g -y
 npx skills add mattpocock/skills -g -y
-npx skills add railwayapp/railway-skills@use-railway -g -y
 npx skills add upstash/context7@find-docs -g -y
 npx skills add remotion-dev/skills -g -y
 npx skills add vercel-labs/agent-skills -g -y
 ```
 
-| Package | Key skills |
+To install only the Railway skill without the CLI or MCP integration:
+
+```bash
+npx skills add railwayapp/railway-skills@use-railway -g -y
+```
+
+| Tool or package | Key capabilities |
 |---|---|
+| [Railway CLI](https://github.com/railwayapp/cli) + [railwayapp/railway-skills](https://github.com/railwayapp/railway-skills) | Preferred deployment and operations tooling. The `use-railway` skill covers deploys, configuration, logs, metrics, SSH, databases, domains, and build/runtime debugging. |
 | [jakubkrehel/skills](https://github.com/jakubkrehel/skills) | `better-interface`, `better-ui`, `better-typography`, `better-colors`, `better-accessibility`, `better-layout`, `better-writing` — holistic interface review plus focused UI polish, typography, color, accessibility, layout, and product-writing guidance. |
 | [millionco/react-doctor](https://github.com/millionco/react-doctor) | `react-doctor` — React/Next health scoring and cleanup. Pairs with `timb-project-preferences`. |
 | [mattpocock/skills](https://github.com/mattpocock/skills) | `grill-me`, `grill-with-docs`, `tdd`, `diagnose`, `prototype`, `to-prd`, `to-issues`, `triage`, `improve-codebase-architecture`, `setup-matt-pocock-skills`, `write-a-skill`. Matt's `handoff` overlaps naming with `timb-handoff-and-follow-up`. |
-| [railwayapp/railway-skills](https://github.com/railwayapp/railway-skills) | `use-railway` — Railway deploy/ops. |
 | [upstash/context7](https://github.com/upstash/context7) | `find-docs` — live library docs via Context7. |
 | [remotion-dev/skills](https://github.com/remotion-dev/skills) | `remotion-best-practices` — Remotion video-in-React. |
 | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | `vercel-react-best-practices`, `vercel-composition-patterns`, `vercel-react-native-skills`, `web-design-guidelines`. |

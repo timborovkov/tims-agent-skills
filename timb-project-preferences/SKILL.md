@@ -44,6 +44,7 @@ Prefer the latest stable supported dependencies and current APIs by default. Do 
 
 ## Skill Routing
 
+- Use `use-railway` for deployments and Railway operations, including configuration, build/runtime debugging, logs, metrics, SSH, databases, domains, and service health.
 - Use `grill-with-docs` when domain language, product plan, or architecture direction is fuzzy enough to deserve interrogation before implementation.
 - Use `timb-test-strategy` when adding, reviewing, or standardizing unit, integration, API, DB, E2E, CI, or AI/agent eval test layers.
 - Use `timb-in-repo-docs` for substantial docs, HTML docs under `docs/`, package READMEs, markdown-to-HTML conversion, or docs sweeps.
