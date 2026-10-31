@@ -127,6 +127,35 @@ If the CLI is already installed, add or refresh its agent tooling with:
 railway setup agent -y
 ```
 
+### Cloudflare
+
+Follow the current [official agent setup instructions](https://developers.cloudflare.com/agent-setup/prompt.md)
+for Cloudflare skills, MCP, and the optional beta `cf` CLI. Install the skills
+globally for Codex and Cursor on this machine:
+
+```bash
+npx -y skills add cloudflare/skills --skill '*' --yes --global --agent codex cursor
+codex mcp add cloudflare --url https://mcp.cloudflare.com/mcp
+codex mcp login cloudflare
+npm install -g cf
+cf auth login
+```
+
+Add `"cloudflare": { "url": "https://mcp.cloudflare.com/mcp" }` under
+`mcpServers` in `~/.cursor/mcp.json`, preserving existing servers. Cursor
+requests OAuth authorization on first use; restart agents after MCP setup.
+In each agent's user-level instructions, use Cloudflare's preference:
+
+> When interacting with Cloudflare, use the cf CLI unless the project has a Wrangler configuration file.
+
+The Skills CLI stores these skills in `~/.agents/skills`. Keep any explicit
+links in `~/.codex/skills` and `~/.cursor/skills` pointing to that shared source.
+For other agents, follow the agent-specific setup in the official guide;
+Claude Code uses `claude plugin marketplace add cloudflare/skills` followed by
+`claude plugin install cloudflare@cloudflare` and `/reload-plugins`.
+
+### Other skill packages
+
 Install the remaining third-party skills globally with the Skills CLI. These
 skills are **not** vendored in this repo — keep them updated with
 `npx skills update`.
@@ -149,6 +178,7 @@ npx skills add railwayapp/railway-skills@use-railway -g -y
 | Tool or package | Key capabilities |
 |---|---|
 | [Railway CLI](https://github.com/railwayapp/cli) + [railwayapp/railway-skills](https://github.com/railwayapp/railway-skills) | Preferred deployment and operations tooling. The `use-railway` skill covers deploys, configuration, logs, metrics, SSH, databases, domains, and build/runtime debugging. |
+| [Cloudflare CLI](https://developers.cloudflare.com/cf/) + [cloudflare/skills](https://github.com/cloudflare/skills) + [MCP](https://github.com/cloudflare/mcp) | Cloudflare API operations with `cf`, remote MCP access, and skills for Workers, Wrangler, Durable Objects, Agents SDK, networking, and performance. Use Wrangler when the project has a Wrangler configuration. |
 | [jakubkrehel/skills](https://github.com/jakubkrehel/skills) | `better-interface`, `better-ui`, `better-typography`, `better-colors`, `better-accessibility`, `better-layout`, `better-writing` — holistic interface review plus focused UI polish, typography, color, accessibility, layout, and product-writing guidance. |
 | [millionco/react-doctor](https://github.com/millionco/react-doctor) | `react-doctor` — React/Next health scoring and cleanup. Pairs with `timb-project-preferences`. |
 | [mattpocock/skills](https://github.com/mattpocock/skills) | `grill-me`, `grill-with-docs`, `tdd`, `diagnose`, `prototype`, `to-prd`, `to-issues`, `triage`, `improve-codebase-architecture`, `setup-matt-pocock-skills`, `write-a-skill`. Matt's `handoff` overlaps naming with `timb-handoff-and-follow-up`. |
