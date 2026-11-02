@@ -33,7 +33,7 @@ Prefer the latest stable supported dependencies and current APIs by default. Do 
 - Repo shape, commands, agent files, `.gitignore`: [references/repo-structure.md](references/repo-structure.md)
 - Frontend defaults: [references/frontend.md](references/frontend.md)
 - AI/model defaults: [references/ai-stack.md](references/ai-stack.md)
-- Backend/data defaults and `pnpm dev:wipe`: [references/backend-data.md](references/backend-data.md)
+- Backend/data defaults and `bun run dev:wipe`: [references/backend-data.md](references/backend-data.md)
 - Optional Go/Python defaults: [references/optional-runtimes.md](references/optional-runtimes.md)
 - Product services: [references/product-services.md](references/product-services.md)
 - Design quality, accessibility, SEO/GEO: [references/design-quality.md](references/design-quality.md)

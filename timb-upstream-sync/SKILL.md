@@ -65,7 +65,7 @@ Default expectations when present:
 - lint/format/prettier
 - typecheck/compile
 - unit/integration tests
-- `pnpm validate` for Node/pnpm repos
+- `bun run validate` for Bun repos
 
 Fix failures caused by the sync. If a failure predates the sync, prove it with a base-branch check or prior logs, then report it clearly.
 

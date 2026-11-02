@@ -3,7 +3,7 @@ name: timb-contribution-workflow
 description: >-
   Runs the general contribution workflow for shipping changes: follows
   AGENTS/CLAUDE and CONTRIBUTING guidance, writes meaningful tests, validates
-  with `pnpm validate`, keeps docs/TODOs current, pushes changes, monitors GitHub CI,
+  with `bun run validate`, keeps docs/TODOs current, pushes changes, monitors GitHub CI,
   and responds to PR reviews or Cursor Bugbot comments by fixing or replying
   concisely. Use for "ship this," "validate and push," "handle CI," "respond to
   review," "fix PR comments," "follow the contribution guide," or "finish the
@@ -52,10 +52,10 @@ Avoid snapshot churn, shallow implementation tests, and tests that only prove a 
 
 ## 4. Validate before push
 
-Run the repo's required gates. For pnpm repos, prefer:
+Run the repo's required gates. For Bun repos, prefer:
 
 ```bash
-pnpm validate
+bun run validate
 ```
 
 If no single validate command exists, run the closest available set:

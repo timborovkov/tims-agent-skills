@@ -34,7 +34,7 @@
 
 - Production-like data stores need documented backup and restore paths: Postgres, object storage, vector indexes, Redis if used, and provider-managed state where applicable.
 - Add a restore drill checklist before launch and after major data-shape changes.
-- `pnpm dev:wipe` is for dev/staging only and is not a backup strategy.
+- `bun run dev:wipe` is for dev/staging only and is not a backup strategy.
 
 ## E2E and browser testing
 

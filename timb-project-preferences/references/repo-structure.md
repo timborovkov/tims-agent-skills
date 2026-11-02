@@ -1,15 +1,15 @@
 # Repo Structure Preferences
 
-- Monorepo using pnpm workspaces and Turbo.
+- Monorepo using Bun workspaces and Turbo.
 - TypeScript only for JavaScript-family code. Do not create pure `.js`/`.jsx` app, package, config, or script code when a TypeScript option is available; use `.ts`/`.tsx` and typed config files. Keep unavoidable runtime JS wrappers tiny and justified.
-- Pin Node.js v24 in `.nvmrc`, `package.json` engines, CI, Docker, and deployment config where applicable.
-- Package manager: pnpm.
+- Pin a stable Bun version consistently in `package.json` (`packageManager` and `engines.bun`), CI, Docker, and deployment config where applicable. Commit `bun.lock` and use `bun install --frozen-lockfile` in CI.
+- Runtime and package manager: Bun.
 - Standard commands:
-  - `pnpm validate` runs the full local gate.
-  - `pnpm test` runs tests.
+  - `bun run validate` runs the full local gate.
+  - `bun run test` runs tests.
   - Include focused commands for lint, format/prettier check, typecheck, build, and any app-specific checks.
 - Strict lint rules by default. Use a real ESLint setup for TypeScript/React/Next.js, fail CI on lint errors, avoid warning-only drift, and add narrowly-scoped disables only with a reason.
-- Prettier is enforced. Include config, ignore file, a check command in `pnpm validate`, and an optional write command for local formatting.
+- Prettier is enforced. Include config, ignore file, a check command in `bun run validate`, and an optional write command for local formatting.
 - GitHub Actions for CI. CI should run install with lockfile enforcement, lint, Prettier check, typecheck/compile, tests, and build when applicable, using the same validation commands developers run locally.
 - `AGENTS.md` for agent instructions.
 - `CLAUDE.md` as an alias or near-identical companion to `AGENTS.md`, including the general contribution workflow.

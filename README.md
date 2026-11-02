@@ -99,13 +99,13 @@ Preview without changes:
 
 | Skill | Description |
 |---|---|
-| `timb-contribution-workflow` | General contribution workflow: follow repo instructions, write meaningful tests, run validation such as `pnpm validate`, keep docs/TODOs current, push changes, handle GitHub CI, and fix or concisely reply to PR reviews/Bugbot comments. Aliases: `contribution-workflow`, `workflow`, `ship-workflow`, `validate-and-push`, `handle-ci`, `handle-review`. |
+| `timb-contribution-workflow` | General contribution workflow: follow repo instructions, write meaningful tests, run validation such as `bun run validate`, keep docs/TODOs current, push changes, handle GitHub CI, and fix or concisely reply to PR reviews/Bugbot comments. Aliases: `contribution-workflow`, `workflow`, `ship-workflow`, `validate-and-push`, `handle-ci`, `handle-review`. |
 | `timb-diff-review` | Read-only, high-signal review of the current branch/worktree against the merge base with main/master/default branch. Verifies introduced defects, ranks findings P0-P3 with 0-100 confidence, and reports exact file/line evidence without changing code. Aliases: `diff-review`, `review-changes`, `branch-review`. |
 | `timb-document-release` | Repository-wide documentation release: inventories every maintained docs surface, refreshes stale content from code and release evidence, regenerates derived docs, and verifies links, formatting, builds, and the final diff. Aliases: `document-release`, `release-docs`, `docs-release`, `refresh-docs`. |
 | [`timb-finnish`](timb-finnish/SKILL.md) | Write, translate, proofread, and naturalize Finnish text. Combines Finnish grammar, typography, and register-aware style editing, with self-contained references for spelling, sentence structure, inflection, word choice, lists, punctuation, and formatting. |
 | `timb-handoff-and-follow-up` | End-of-session workflow: align docs/TODO markdown against the diff, then write prompts for one or more independent follow-up agents. Aliases: `handoff`, `handoff-and-follow-up`. |
 | `timb-in-repo-docs` | Write and maintain in-repo docs. HTML in `docs/` for briefs/guides/explainers/architecture (styled per `design.md`, visual-first), markdown for TODOs/READMEs/CHANGELOG, and a consumer check before touching any `.md` that's used as page content. Two flows: author a single doc, or run a structural sweep across the whole repo. Aliases: `in-repo-docs`, `docs-sweep`. |
-| `timb-project-preferences` | Default repo setup preferences: pnpm/Turbo, TypeScript frontends chosen by project shape, Vite + React for lightweight apps, Next.js when its routing/SSR/server conventions help, Node 24, Tailwind + shadcn/ui, Vitest, AI/data/deploy defaults, docs/TODO/contribution workflow, and i13n/i18n by default unless the project or user specifies otherwise. Aliases: `project-preferences`, `project-defaults`, `setup-preferences`, `repo-defaults`. |
+| `timb-project-preferences` | Default repo setup preferences: Bun/Turbo, TypeScript frontends chosen by project shape, Vite + React for lightweight apps, Next.js when its routing/SSR/server conventions help, Tailwind + shadcn/ui, Vitest, AI/data/deploy defaults, docs/TODO/contribution workflow, and i13n/i18n by default unless the project or user specifies otherwise. Aliases: `project-preferences`, `project-defaults`, `setup-preferences`, `repo-defaults`. |
 | `timb-test-strategy` | Testing strategy for adding, reviewing, and improving meaningful tests across unit, integration, API, DB, E2E, CI, and AI/agent eval layers. Aliases: `test-strategy`, `tests`, `testing`, `coverage`, `test-review`. |
 | `timb-trim` | Code quality + line-count pass over the whole codebase or the diff vs main. Writes a findings report, gates refactors on real test coverage, implements after approval, deletes the report. Aliases: `trim`, `reduce`, `simplify-review`. |
 | `timb-upstream-sync` | Merge/rebase from upstream safely while preserving both branch and upstream intent, resolving conflicts semantically, applying cross-cutting upstream requirements such as i13n/i18n to branch code, validating, updating docs/TODOs, and pushing. Aliases: `upstream-sync`, `sync-upstream`, `merge-upstream`, `rebase-upstream`. |
@@ -134,10 +134,10 @@ for Cloudflare skills, MCP, and the optional beta `cf` CLI. Install the skills
 globally for Codex and Cursor on this machine:
 
 ```bash
-npx -y skills add cloudflare/skills --skill '*' --yes --global --agent codex cursor
+bunx skills add cloudflare/skills --skill '*' --yes --global --agent codex cursor
 codex mcp add cloudflare --url https://mcp.cloudflare.com/mcp
 codex mcp login cloudflare
-npm install -g cf
+bun add --global cf
 cf auth login
 ```
 
@@ -158,21 +158,21 @@ Claude Code uses `claude plugin marketplace add cloudflare/skills` followed by
 
 Install the remaining third-party skills globally with the Skills CLI. These
 skills are **not** vendored in this repo — keep them updated with
-`npx skills update`.
+`bunx skills update`.
 
 ```bash
-npx skills add jakubkrehel/skills -g -y
-npx skills add millionco/react-doctor -g -y
-npx skills add mattpocock/skills -g -y
-npx skills add upstash/context7@find-docs -g -y
-npx skills add remotion-dev/skills -g -y
-npx skills add vercel-labs/agent-skills -g -y
+bunx skills add jakubkrehel/skills -g -y
+bunx skills add millionco/react-doctor -g -y
+bunx skills add mattpocock/skills -g -y
+bunx skills add upstash/context7@find-docs -g -y
+bunx skills add remotion-dev/skills -g -y
+bunx skills add vercel-labs/agent-skills -g -y
 ```
 
 To install only the Railway skill without the CLI or MCP integration:
 
 ```bash
-npx skills add railwayapp/railway-skills@use-railway -g -y
+bunx skills add railwayapp/railway-skills@use-railway -g -y
 ```
 
 | Tool or package | Key capabilities |
@@ -186,4 +186,4 @@ npx skills add railwayapp/railway-skills@use-railway -g -y
 | [remotion-dev/skills](https://github.com/remotion-dev/skills) | `remotion-best-practices` — Remotion video-in-React. |
 | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | `vercel-react-best-practices`, `vercel-composition-patterns`, `vercel-react-native-skills`, `web-design-guidelines`. |
 
-This repo's `timb-*` skills are installed with `./install.sh`, not `npx skills add`.
+This repo's `timb-*` skills are installed with `./install.sh`, not `bunx skills add`.

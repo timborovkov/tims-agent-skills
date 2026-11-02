@@ -9,7 +9,7 @@
   1. `railway login`
   2. `railway link` for the web app
   3. `railway ssh`
-  4. `ALLOW_DESTRUCTIVE_DEV_WIPE=true NODE_ENV=development pnpm dev:wipe` inside the shell
+  4. `ALLOW_DESTRUCTIVE_DEV_WIPE=true NODE_ENV=development bun run dev:wipe` inside the shell
 - Docker and `docker-compose.yml` for local dependencies and reproducible app/service runs.
 - GitHub Actions should validate, test, and build before merge.
 - Deployment config should match local commands and pinned runtime versions.
