@@ -1,7 +1,7 @@
 ---
 name: timb-in-repo-docs
 description: >-
-  Writes and maintains in-repo docs using Tim's conventions: HTML docs under
+  Writes and maintains in-repo docs using a consistent documentation convention: HTML docs under
   `docs/`, markdown READMEs/TODOs, protected project files, visual-first docs,
   and safe markdown-to-HTML conversion. Use when creating docs, adding a
   package README, converting markdown to HTML, running a structural docs sweep,
@@ -12,7 +12,8 @@ description: >-
 
 # Timb In-Repo Docs
 
-Use for new HTML docs, package/subfolder READMEs, markdown-to-HTML conversion, and explicit docs sweeps. Existing protected markdown keeps its format.
+Use for new HTML docs, package/subfolder READMEs, markdown-to-HTML conversion, and explicit docs sweeps. The user's requested format and existing project conventions take priority over
+this skill's defaults. Existing protected markdown keeps its format.
 
 `<docsDir>` means the directory declared by `design.md`, defaulting to `docs/`.
 

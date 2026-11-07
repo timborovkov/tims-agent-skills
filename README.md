@@ -1,8 +1,12 @@
 # personal-skills
 
-Personal AI skills, kept in one place and symlinked into every tool that uses
+Reusable AI skills, kept in one place and symlinked into every tool that uses
 them (Claude Code, Cursor, Codex, OpenCode, Hermes). One source of truth, no
 copy-paste drift.
+
+The `timb-` prefix identifies this collection, not the intended user. Skills work
+with the invoking user's goals, voice, and project conventions. Personal examples,
+account history, and machine-specific settings belong in user or project context.
 
 Lives at `~/Desktop/Projects/personal-skills/`. The install script normally
 uses its own location, but if it is run from a disposable Codex worktree it
@@ -113,7 +117,7 @@ Preview without changes:
 | `timb-trim` | Code quality + line-count pass over the whole codebase or the diff vs main. Writes a findings report, gates refactors on real test coverage, implements after approval, deletes the report. Aliases: `trim`, `reduce`, `simplify-review`. |
 | `timb-untangle-codebase` | Untangle a whole codebase in one pass so later agent work reads less, breaks less, and debugs faster. Asks whether to also clean restating comments and weak tests. Adapted from [caldoai/skills `untangle-codebase`](https://github.com/caldoai/skills/blob/main/skills/untangle-codebase/SKILL.md). Aliases: `untangle-codebase`, `untangle`. |
 | `timb-upstream-sync` | Merge/rebase from upstream safely while preserving both branch and upstream intent, resolving conflicts semantically, applying cross-cutting upstream requirements such as i13n/i18n to branch code, validating, updating docs/TODOs, and pushing. Aliases: `upstream-sync`, `sync-upstream`, `merge-upstream`, `rebase-upstream`. |
-| [`timb-x`](timb-x/SKILL.md) | X posts, replies, quote posts, threads, editing, content planning, profile reviews, performance analysis, and optional reach experiments in Tim's voice. Combines selected ideas from viral-x-posts and x-skills with his own drafting lessons; publishing requires an available authenticated tool and authorization. |
+| [`timb-x`](timb-x/SKILL.md) | X posts, replies, quote posts, threads, editing, content planning, profile reviews, performance analysis, and optional reach experiments in the user's or brand's voice. Combines selected ideas from viral-x-posts and x-skills; publishing requires an available authenticated tool and authorization. |
 
 ## Recommended third-party tooling and skills
 

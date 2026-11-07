@@ -1,24 +1,24 @@
 # Sources and adaptation
 
-Created 7 November 2026 from Tim's explicit request and supplied X drafting lessons.
+Created 7 November 2026. Generalized for any user; personal voice preferences and
+account history belong in the invoking user's context, not the shared skill.
 
 - [shannhk/viral-x-posts](https://github.com/shannhk/viral-x-posts), revision
   `d95e6012f4cddc6b9118b3662f2c16c09540187c`: reviewed the entrypoint and
   `references/formulas.md` for format selection, concrete evidence, and post/thread
   structures. No repository license was returned by GitHub's license endpoint
   when checked. No source text, formula catalog, or code is vendored here; the
-  guidance is newly written for Tim.
+  guidance is newly written for this skill.
 - [sergebulaev/x-skills](https://github.com/sergebulaev/x-skills), revision
   `f52d7c64258de02a990eceee4378cef2c87c5600`: reviewed the bundle entrypoint,
   README, reply drafter, humanizer, and audience insights workflows. Adapted the
   separation of writing, voice editing, context gathering, analysis, and publishing.
   The upstream MIT notice follows for attribution of adapted workflow material.
 
-Tim's preferences override the upstream defaults. This skill omits engagement-bait
+The invoking user's preferences govern the writing style. This skill omits engagement-bait
 formulas, numerical algorithm claims, posting quotas, imposed lowercase or double
-periods, em-dash allowances, forced rewrites of approved text, promotional requests,
+periods, forced rewrites of approved text, promotional requests,
 and provider-specific clients. It keeps drafting portable and publishing explicit.
-The 2,635-impression result is user-reported early evidence, not a verified benchmark.
 
 ## Upstream MIT notice: sergebulaev/x-skills
 

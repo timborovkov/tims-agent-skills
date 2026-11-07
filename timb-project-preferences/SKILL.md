@@ -1,7 +1,7 @@
 ---
 name: timb-project-preferences
 description: >-
-  Applies Tim's default project setup preferences when creating, initializing,
+  Applies an opinionated set of project setup defaults when creating, initializing,
   or standardizing a repo. Covers repo shape, TypeScript/frontend defaults,
   optional Go/Python stacks, AI/model infrastructure, backend/data choices,
   product services, design quality, compliance, reliability/observability,
@@ -13,7 +13,7 @@ description: >-
 
 # Timb Project Preferences
 
-Purpose: apply Tim's defaults when the user has not specified another stack. Existing project conventions win unless the user asks to migrate.
+Purpose: apply this skill's documented defaults when the user has not specified another stack. The user's preferences override these defaults. Existing project conventions win unless the user asks to migrate.
 
 Before using library/framework-specific APIs, fetch current docs according to the repo's doc-fetching rule, such as `ctx7`/Context7.
 

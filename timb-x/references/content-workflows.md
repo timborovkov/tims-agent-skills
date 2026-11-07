@@ -15,7 +15,7 @@ to a reply on the strength of an unsupported algorithm rule.
 
 ## Threads and long posts
 
-Choose a thread when the material needs separate connected steps or Tim requests
+Choose a thread when the material needs separate connected steps or the user requests
 one. Choose a single long post only if the account supports it and that format
 suits the request. Neither format requires a fixed segment count.
 
@@ -29,9 +29,9 @@ still fail to support the conclusion attached to it. Label forecasts as forecast
 
 ## Repurposing
 
-Read the original material and identify the part relevant to Tim's X audience.
+Read the original material and identify the part relevant to the user's X audience.
 Preserve the source's meaning and attribution. Do not convert someone else's
-experience into Tim's first-person story. Adapt length and framing without copying
+experience into the user's first-person story. Adapt length and framing without copying
 another platform's sales pitch, hashtags, or formatting by default.
 
 ## Hook analysis
@@ -42,7 +42,7 @@ or a clear disagreement. Separate the writing mechanism from the author's audien
 timing, subject, and existing reputation. Popularity alone does not establish why
 it worked.
 
-Transfer the useful principle to Tim's own material, not the author's distinctive
+Transfer the useful principle to the user's own material, not the author's distinctive
 phrasing or achievements. Reject a proposed hook if its payoff is absent. Treat
 “make it viral” as a request to improve relevance and clarity, not a guarantee.
 
