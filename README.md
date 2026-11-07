@@ -25,6 +25,9 @@ personal-skills/
 Each skill is a folder with at minimum a `SKILL.md` (YAML frontmatter +
 markdown body). Extra files (scripts, templates) live next to it.
 
+For Codex Cloud, Cursor Cloud Agents, and Grok Bot, see
+[Cloud installation](CLOUD-INSTALL.md).
+
 ## Install
 
 ```bash
@@ -110,6 +113,7 @@ Preview without changes:
 | `timb-trim` | Code quality + line-count pass over the whole codebase or the diff vs main. Writes a findings report, gates refactors on real test coverage, implements after approval, deletes the report. Aliases: `trim`, `reduce`, `simplify-review`. |
 | `timb-untangle-codebase` | Untangle a whole codebase in one pass so later agent work reads less, breaks less, and debugs faster. Asks whether to also clean restating comments and weak tests. Adapted from [caldoai/skills `untangle-codebase`](https://github.com/caldoai/skills/blob/main/skills/untangle-codebase/SKILL.md). Aliases: `untangle-codebase`, `untangle`. |
 | `timb-upstream-sync` | Merge/rebase from upstream safely while preserving both branch and upstream intent, resolving conflicts semantically, applying cross-cutting upstream requirements such as i13n/i18n to branch code, validating, updating docs/TODOs, and pushing. Aliases: `upstream-sync`, `sync-upstream`, `merge-upstream`, `rebase-upstream`. |
+| [`timb-x`](timb-x/SKILL.md) | X posts, replies, quote posts, threads, editing, content planning, profile reviews, performance analysis, and optional reach experiments in Tim's voice. Combines selected ideas from viral-x-posts and x-skills with his own drafting lessons; publishing requires an available authenticated tool and authorization. |
 
 ## Recommended third-party tooling and skills
 
@@ -168,7 +172,24 @@ bunx skills add mattpocock/skills -g -y
 bunx skills add upstash/context7@find-docs -g -y
 bunx skills add remotion-dev/skills -g -y
 bunx skills add vercel-labs/agent-skills -g -y
+bunx skills add Leonxlnx/taste-skill --skill design-taste-frontend -g -y
+bunx skills add Leonxlnx/imagegen-skills --skill image-to-code -g -y
+bunx skills add microsoft/playwright-cli --skill playwright-cli -g -y
+bunx skills add latent-spaces/brag --skill brag -g -y
+bunx skills add coreyhaines31/marketingskills -g -y
 ```
+
+Playwright's skill also needs its CLI:
+
+```bash
+npm install -g @playwright/cli@latest
+playwright-cli --version
+```
+
+Taste Skill requires Node.js 22+ and Chrome, Edge, or Chromium. Image-to-Code
+lives in `Leonxlnx/imagegen-skills` after moving out of the Taste Skill repo.
+`brag` requires Node.js 22+, FFmpeg on `PATH`, and Hyperframes (`npm install -g
+hyperframes`; check readiness with `hyperframes doctor`).
 
 To install only the Railway skill without the CLI or MCP integration:
 
@@ -186,5 +207,10 @@ bunx skills add railwayapp/railway-skills@use-railway -g -y
 | [upstash/context7](https://github.com/upstash/context7) | `find-docs` — live library docs via Context7. |
 | [remotion-dev/skills](https://github.com/remotion-dev/skills) | `remotion-best-practices` — Remotion video-in-React. |
 | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | `vercel-react-best-practices`, `vercel-composition-patterns`, `vercel-react-native-skills`, `web-design-guidelines`. |
+| [Taste Skill](https://github.com/Leonxlnx/taste-skill) | `design-taste-frontend` — art direction, coherent visual systems, real assets, and browser checks for websites. |
+| [Image-to-Code](https://github.com/Leonxlnx/imagegen-skills/tree/main/skills/image-to-code) | `image-to-code` — generate visual references, analyze them, and implement a matching website. |
+| [Playwright CLI](https://github.com/microsoft/playwright-cli) | `playwright-cli` — browser automation, screenshots, debugging, and test generation through a CLI and companion skill. |
+| [latent-spaces/brag](https://github.com/latent-spaces/brag) | `brag` — turn a project into a launch video with music, motion, and share copy using Hyperframes. |
+| [coreyhaines31/marketingskills](https://github.com/coreyhaines31/marketingskills) | Marketing strategy, website copywriting and editing, SEO, conversion optimization, social content, cold email, and sales enablement. Start with `product-marketing` for shared product context, then use `copywriting`, `copy-editing`, `social`, or the relevant specialist skill. |
 
 This repo's `timb-*` skills are installed with `./install.sh`, not `bunx skills add`.
