@@ -48,8 +48,8 @@ Prefer the latest stable supported dependencies and current APIs by default. Do 
 - Use `grill-with-docs` when domain language, product plan, or architecture direction is fuzzy enough to deserve interrogation before implementation.
 - Use `timb-test-strategy` when adding, reviewing, or standardizing unit, integration, API, DB, E2E, CI, or AI/agent eval test layers.
 - Use `timb-in-repo-docs` for substantial docs, HTML docs under `docs/`, package READMEs, markdown-to-HTML conversion, or docs sweeps.
-- Use `timb-contribution-workflow` when the task is to validate, test, push, monitor CI, or respond to reviews.
+- Use `timb-ship` when the task is to validate, test, push, monitor CI, or respond to reviews.
 - Use `timb-upstream-sync` when rebasing/merging upstream or resolving conflicts while preserving both upstream and current-PR intent.
 - Use `react-doctor` for Next.js/React health, performance, security, and architecture checks.
-- Use `make-interfaces-feel-better` for UI polish and interaction detail work.
-- Use `seo-geo` for search visibility, schema, metadata, indexing, and AI search citation work.
+- Use `better-interface` for UI polish and interaction detail work.
+- Use `seo-audit` and `ai-seo` for search visibility, schema, metadata, indexing, and AI search citation work.

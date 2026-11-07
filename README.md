@@ -38,8 +38,7 @@ For Codex Cloud, Cursor Cloud Agents, and Grok Bot, see
 ./install.sh
 ```
 
-Idempotent. Re-run after adding a new skill folder. Skips tools that aren't
-installed on this machine.
+Idempotent. Re-run after adding a new skill folder. Creates skill directories for Claude Code, Cursor, Codex, and OpenCode. Hermes is included when installed.
 
 If you intentionally want to install from a non-default checkout, set:
 
@@ -56,6 +55,7 @@ PERSONAL_SKILLS_ALLOW_WORKTREE_SOURCE=1 ./install.sh
 What it does:
 - Finds every `<name>/SKILL.md` in this directory
 - For each, creates a symlink at:
+  - `~/.agents/skills/<name>` (shared source/discovery)
   - `~/.claude/skills/<name>`
   - `~/.cursor/skills/<name>`
   - `~/.codex/skills/<name>`
@@ -73,7 +73,7 @@ What it does:
 ```
 
 Use this when a skill was created inside any one tool's skills directory and
-the other tools should point at the same original. The script scans Claude,
+the other tools should point at the same original. The script includes the shared `~/.agents/skills` source and scans Claude,
 Cursor, Codex, OpenCode, and Hermes skill dirs, picks the real skill directory
 as the source, and symlinks the other locations to it. If all copies are
 already symlinks, it reuses the shared resolved target. It refuses ambiguous
@@ -106,15 +106,14 @@ Preview without changes:
 
 | Skill | Description |
 |---|---|
-| `timb-contribution-workflow` | General contribution workflow: follow repo instructions, write meaningful tests, run validation such as `bun run validate`, keep docs/TODOs current, push changes, handle GitHub CI, and fix or concisely reply to PR reviews/Bugbot comments. Aliases: `contribution-workflow`, `workflow`, `ship-workflow`, `validate-and-push`, `handle-ci`, `handle-review`. |
+| `timb-ship` | Explicit shipping command: scoped cleanup, review, relevant React Doctor checks, validation, docs, commit/push, PR, and CI/review follow-through. Replaces contribution-workflow and trim; legacy contribution aliases are removed. Alias: `ship`. |
 | `timb-diff-review` | Read-only, high-signal review of the current branch/worktree against the merge base with main/master/default branch. Verifies introduced defects, ranks findings P0-P3 with 0-100 confidence, and reports exact file/line evidence without changing code. Aliases: `diff-review`, `review-changes`, `branch-review`. |
 | `timb-document-release` | Repository-wide documentation release: inventories every maintained docs surface, refreshes stale content from code and release evidence, regenerates derived docs, and verifies links, formatting, builds, and the final diff. Aliases: `document-release`, `release-docs`, `docs-release`, `refresh-docs`. |
 | [`timb-finnish`](timb-finnish/SKILL.md) | Write, translate, proofread, and naturalize Finnish text. Combines Finnish grammar, typography, and register-aware style editing, with self-contained references for spelling, sentence structure, inflection, word choice, lists, punctuation, and formatting. |
-| `timb-handoff-and-follow-up` | End-of-session workflow: align docs/TODO markdown against the diff, then write prompts for one or more independent follow-up agents. Aliases: `handoff`, `handoff-and-follow-up`. |
+| `timb-handoff-and-follow-up` | Explicit handoff command: save current context, evidence, constraints, and next steps. No compulsory sync, docs sweep, or agent-count question. Alias: `handoff`. |
 | `timb-in-repo-docs` | Write and maintain in-repo docs. HTML in `docs/` for briefs/guides/explainers/architecture (styled per `design.md`, visual-first), markdown for TODOs/READMEs/CHANGELOG, and a consumer check before touching any `.md` that's used as page content. Two flows: author a single doc, or run a structural sweep across the whole repo. Aliases: `in-repo-docs`, `docs-sweep`. |
 | `timb-project-preferences` | Default repo setup preferences: Bun/Turbo, TypeScript frontends chosen by project shape, Vite + React for lightweight apps, Next.js when its routing/SSR/server conventions help, Tailwind + shadcn/ui, Vitest, AI/data/deploy defaults, docs/TODO/contribution workflow, and i13n/i18n by default unless the project or user specifies otherwise. Aliases: `project-preferences`, `project-defaults`, `setup-preferences`, `repo-defaults`. |
 | `timb-test-strategy` | Testing strategy for adding, reviewing, and improving meaningful tests across unit, integration, API, DB, E2E, CI, and AI/agent eval layers. Aliases: `test-strategy`, `tests`, `testing`, `coverage`, `test-review`. |
-| `timb-trim` | Code quality + line-count pass over the whole codebase or the diff vs main. Writes a findings report, gates refactors on real test coverage, implements after approval, deletes the report. Aliases: `trim`, `reduce`, `simplify-review`. |
 | `timb-untangle-codebase` | Untangle a whole codebase in one pass so later agent work reads less, breaks less, and debugs faster. Asks whether to also clean restating comments and weak tests. Adapted from [caldoai/skills `untangle-codebase`](https://github.com/caldoai/skills/blob/main/skills/untangle-codebase/SKILL.md). Aliases: `untangle-codebase`, `untangle`. |
 | `timb-upstream-sync` | Merge/rebase from upstream safely while preserving both branch and upstream intent, resolving conflicts semantically, applying cross-cutting upstream requirements such as i13n/i18n to branch code, validating, updating docs/TODOs, and pushing. Aliases: `upstream-sync`, `sync-upstream`, `merge-upstream`, `rebase-upstream`. |
 | [`timb-x`](timb-x/SKILL.md) | X posts, replies, quote posts, threads, editing, content planning, profile reviews, performance analysis, and optional reach experiments in the user's or brand's voice. Combines selected ideas from viral-x-posts and x-skills; publishing requires an available authenticated tool and authorization. |
@@ -218,3 +217,49 @@ bunx skills add railwayapp/railway-skills@use-railway -g -y
 | [coreyhaines31/marketingskills](https://github.com/coreyhaines31/marketingskills) | Marketing strategy, website copywriting and editing, SEO, conversion optimization, social content, cold email, and sales enablement. Start with `product-marketing` for shared product context, then use `copywriting`, `copy-editing`, `social`, or the relevant specialist skill. |
 
 This repo's `timb-*` skills are installed with `./install.sh`, not `bunx skills add`.
+
+## Workflow policy and retired skills
+
+`ship` resolves to `timb-ship`, not the third-party React Doctor shipping workflow.
+React Doctor and its specialist skills remain available globally. `timb-trim` is
+retired; its public-API and meaningful-verification safeguards live in `timb-ship`.
+Old contribution-workflow names and the redundant third-party `matt-handoff` are retired.
+Use `timb-ship` / `ship` and `timb-handoff-and-follow-up` / `handoff`.
+
+Shipping and handoff are explicit commands packaged as portable skills:
+`disable-model-invocation: true` plus Codex's
+`agents/openai.yaml` `allow_implicit_invocation: false`. Invoke them by name;
+clients may expose different slash or dollar command syntax.
+
+`disabled-skills.txt` excludes skills from global synchronization. Context7 MCP is
+disabled on this machine because it is not configured; `find-docs` and
+`context7-cli` remain available for CLI lookup/setup. Remove the exclusion and
+restore/install that skill if MCP becomes available. Third-party updates may
+restore retired skills; rerun installation and inspect the sync preview afterward.
+The sync reports excluded installed entries for cleanup; it never deletes them.
+
+After third-party installation or updates, run `./install.sh` and then
+`./sync-global-skills.sh`. App-bundled plugin and internal system skills remain
+managed by their own apps; they are not copied between clients.
+
+### Local tooling and overlap policy
+
+Install the React Doctor CLI locally as well as its skill:
+
+```bash
+bun add --global react-doctor@latest
+react-doctor --version
+react-doctor --help
+```
+
+`react-doctor` and all its specialist skills remain globally available. Installing
+skill instructions alone does not install the executable.
+
+`install.sh` reapplies `scripts/apply-skill-policy.py` after skill installation.
+It makes `context7-cli` and `code-review` explicit-only in Claude/Cursor frontmatter
+and Codex invocation policy, preserving their content and supporting references.
+Use `find-docs` for ordinary documentation lookup and `timb-diff-review` for the
+personal review workflow. Context7 setup and the alternative Standards/Spec review
+remain available when explicitly requested or called by their parent workflows.
+Keep `interface-review` and the `better-*` family together: they depend on one
+another and cover change scope versus individual UI disciplines.

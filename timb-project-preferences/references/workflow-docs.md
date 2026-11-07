@@ -9,4 +9,4 @@
 - Push changes after validation when the user asked to ship.
 - React to GitHub CI failures and PR review comments until each is fixed or answered.
 - Route substantial docs work through `timb-in-repo-docs`.
-- Route validation, push, CI, and review-response work through `timb-contribution-workflow`.
+- Route validation, push, CI, and review-response work through `timb-ship`.

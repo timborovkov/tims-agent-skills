@@ -1,0 +1,14 @@
+# Excluded from global skill synchronization on this machine.
+context7-mcp
+timb-trim
+trim
+reduce
+simplify-review
+ship-workflow
+validate-and-push
+handle-ci
+handle-review
+timb-contribution-workflow
+contribution-workflow
+workflow
+matt-handoff

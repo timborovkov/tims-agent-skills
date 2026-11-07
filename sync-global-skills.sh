@@ -9,7 +9,15 @@
 
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DISABLED_FILE="${SCRIPT_DIR}/disabled-skills.txt"
+
+is_disabled() {
+  [[ -f "${DISABLED_FILE}" ]] && grep -Fxq "$1" "${DISABLED_FILE}"
+}
+
 ROOTS=(
+  "${HOME}/.agents/skills"
   "${HOME}/.claude/skills"
   "${HOME}/.cursor/skills"
   "${HOME}/.codex/skills"
@@ -17,7 +25,6 @@ ROOTS=(
 )
 
 if [[ -d "${HOME}/.hermes" ]]; then
-  mkdir -p "${HOME}/.hermes/skills"
   ROOTS+=("${HOME}/.hermes/skills")
 fi
 
@@ -34,6 +41,7 @@ case "${1:-}" in
 Usage: ./sync-global-skills.sh [--apply|--dry-run]
 
 Discovers skill folders in:
+  ~/.agents/skills         (shared source)
   ~/.claude/skills
   ~/.cursor/skills
   ~/.codex/skills
@@ -78,6 +86,10 @@ for root in "${ROOTS[@]}"; do
   while IFS= read -r -d '' entry; do
     name="${entry##*/}"
     [[ "${name}" == .* ]] && continue
+    if is_disabled "${name}"; then
+      echo "excluded: ${entry} (remove or archive separately if still installed)"
+      continue
+    fi
     is_skill "${entry}" || continue
     printf '%s\n' "${name}" >> "${names_file}"
   done < <(find "${root}" -mindepth 1 -maxdepth 1 \( -type d -o -type l \) -print0)

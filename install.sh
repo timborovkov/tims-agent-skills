@@ -40,6 +40,7 @@ if [[ -z "${PERSONAL_SKILLS_SOURCE_DIR:-}" && "${SCRIPT_DIR}" == "${HOME}/.codex
   fi
 fi
 TARGETS=(
+  "${HOME}/.agents/skills"
   "${HOME}/.claude/skills"
   "${HOME}/.cursor/skills"
   "${HOME}/.codex/skills"
@@ -76,8 +77,7 @@ errors=0
 
 for target_root in "${TARGETS[@]}"; do
   if [[ ! -d "${target_root}" ]]; then
-    echo "target missing: ${target_root} — skipping (tool likely not installed)"
-    continue
+    mkdir -p "${target_root}"
   fi
 
   for skill_dir in "${skills[@]}"; do
@@ -122,4 +122,7 @@ done
 
 echo
 echo "Done. ${linked} created, ${skipped} already correct, ${errors} errors."
+if [[ "${errors}" -eq 0 ]]; then
+  python3 "${SOURCE_DIR}/scripts/apply-skill-policy.py"
+fi
 exit "${errors}"
