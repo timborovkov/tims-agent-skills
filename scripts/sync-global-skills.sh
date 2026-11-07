@@ -10,7 +10,8 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DISABLED_FILE="${SCRIPT_DIR}/disabled-skills.txt"
+REPO_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+DISABLED_FILE="${REPO_DIR}/disabled-skills.txt"
 
 is_disabled() {
   [[ -f "${DISABLED_FILE}" ]] && grep -Fxq "$1" "${DISABLED_FILE}"
@@ -38,7 +39,7 @@ case "${1:-}" in
     ;;
   -h|--help)
     cat <<'USAGE'
-Usage: ./sync-global-skills.sh [--apply|--dry-run]
+Usage: ./scripts/sync-global-skills.sh [--apply|--dry-run]
 
 Discovers skill folders in:
   ~/.agents/skills         (shared source)
@@ -56,7 +57,7 @@ USAGE
     ;;
   *)
     echo "error: unknown argument: $1" >&2
-    echo "usage: ./sync-global-skills.sh [--apply|--dry-run]" >&2
+    echo "usage: ./scripts/sync-global-skills.sh [--apply|--dry-run]" >&2
     exit 2
     ;;
 esac

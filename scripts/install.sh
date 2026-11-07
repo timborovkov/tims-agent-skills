@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# install.sh — symlink every skill in this folder into each AI tool's skills dir.
+# install.sh — symlink every skill in the repository into each AI tool's skills dir.
 #
 # Source of truth: the stable personal-skills checkout. Running this script
 # from a disposable Codex worktree falls back to ~/Desktop/Projects/personal-skills
@@ -18,22 +18,23 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 DEFAULT_SOURCE_DIR="${HOME}/Desktop/Projects/personal-skills"
-SOURCE_DIR="${PERSONAL_SKILLS_SOURCE_DIR:-${SCRIPT_DIR}}"
+SOURCE_DIR="${PERSONAL_SKILLS_SOURCE_DIR:-${REPO_DIR}}"
 
 has_skills() {
   local dir="$1"
   [[ -d "${dir}" ]] && find "${dir}" -mindepth 2 -maxdepth 2 -name "SKILL.md" -print -quit | grep -q .
 }
 
-if [[ -z "${PERSONAL_SKILLS_SOURCE_DIR:-}" && "${SCRIPT_DIR}" == "${HOME}/.codex/worktrees/"* && "${PERSONAL_SKILLS_ALLOW_WORKTREE_SOURCE:-}" != "1" ]]; then
+if [[ -z "${PERSONAL_SKILLS_SOURCE_DIR:-}" && "${REPO_DIR}" == "${HOME}/.codex/worktrees/"* && "${PERSONAL_SKILLS_ALLOW_WORKTREE_SOURCE:-}" != "1" ]]; then
   if has_skills "${DEFAULT_SOURCE_DIR}"; then
     SOURCE_DIR="${DEFAULT_SOURCE_DIR}"
     echo "running from Codex worktree; using stable source: ${SOURCE_DIR}"
     echo "set PERSONAL_SKILLS_ALLOW_WORKTREE_SOURCE=1 to install from this worktree"
     echo
   else
-    echo "error: refusing to install skills from disposable Codex worktree: ${SCRIPT_DIR}" >&2
+    echo "error: refusing to install skills from disposable Codex worktree: ${REPO_DIR}" >&2
     echo "       stable source not found at ${DEFAULT_SOURCE_DIR}" >&2
     echo "       set PERSONAL_SKILLS_SOURCE_DIR=/path/to/personal-skills or PERSONAL_SKILLS_ALLOW_WORKTREE_SOURCE=1" >&2
     exit 1

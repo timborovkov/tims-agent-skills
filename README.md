@@ -17,8 +17,10 @@ worktree that may be deleted.
 
 ```
 personal-skills/
-├── install.sh            # symlink each skill into every configured tool dir
-├── sync-global-skills.sh # reconcile skills across Claude/Cursor/Codex/OpenCode/Hermes
+├── scripts/
+│   ├── install.sh             # install personal skills across tools
+│   ├── sync-global-skills.sh  # reconcile the shared skill collection
+│   └── apply-skill-policy.py  # apply explicit-invocation policy
 ├── timb-handoff-and-follow-up/
 │   ├── SKILL.md          # end-of-session handoff + follow-up workflow
 │   └── aliases           # optional legacy / short names
@@ -35,7 +37,7 @@ For Codex Cloud, Cursor Cloud Agents, and Grok Bot, see
 ## Install
 
 ```bash
-./install.sh
+./scripts/install.sh
 ```
 
 Idempotent. Re-run after adding a new skill folder. Creates skill directories for Claude Code, Cursor, Codex, and OpenCode. Hermes is included when installed.
@@ -43,13 +45,13 @@ Idempotent. Re-run after adding a new skill folder. Creates skill directories fo
 If you intentionally want to install from a non-default checkout, set:
 
 ```bash
-PERSONAL_SKILLS_SOURCE_DIR=/path/to/personal-skills ./install.sh
+PERSONAL_SKILLS_SOURCE_DIR=/path/to/personal-skills ./scripts/install.sh
 ```
 
 If you are deliberately testing from a Codex worktree, set:
 
 ```bash
-PERSONAL_SKILLS_ALLOW_WORKTREE_SOURCE=1 ./install.sh
+PERSONAL_SKILLS_ALLOW_WORKTREE_SOURCE=1 ./scripts/install.sh
 ```
 
 What it does:
@@ -69,7 +71,7 @@ What it does:
 ## Sync global skill dirs
 
 ```bash
-./sync-global-skills.sh
+./scripts/sync-global-skills.sh
 ```
 
 Use this when a skill was created inside any one tool's skills directory and
@@ -83,7 +85,7 @@ included only when `~/.hermes` exists.
 Preview without changes:
 
 ```bash
-./sync-global-skills.sh --dry-run
+./scripts/sync-global-skills.sh --dry-run
 ```
 
 ## Adding a new skill
@@ -99,7 +101,7 @@ Preview without changes:
    ---
    ```
 3. Write the body — the model reads this as the skill's instructions.
-4. Run `./install.sh` to fan out the symlink.
+4. Run `./scripts/install.sh` to fan out the symlink.
 5. Commit the new skill folder.
 
 ## Available skills
@@ -216,7 +218,7 @@ bunx skills add railwayapp/railway-skills@use-railway -g -y
 | [latent-spaces/brag](https://github.com/latent-spaces/brag) | `brag` — turn a project into a launch video with music, motion, and share copy using Hyperframes. |
 | [coreyhaines31/marketingskills](https://github.com/coreyhaines31/marketingskills) | Marketing strategy, website copywriting and editing, SEO, conversion optimization, social content, cold email, and sales enablement. Start with `product-marketing` for shared product context, then use `copywriting`, `copy-editing`, `social`, or the relevant specialist skill. |
 
-This repo's `timb-*` skills are installed with `./install.sh`, not `bunx skills add`.
+This repo's `timb-*` skills are installed with `./scripts/install.sh`, not `bunx skills add`.
 
 ## Workflow policy and retired skills
 
@@ -238,8 +240,8 @@ restore/install that skill if MCP becomes available. Third-party updates may
 restore retired skills; rerun installation and inspect the sync preview afterward.
 The sync reports excluded installed entries for cleanup; it never deletes them.
 
-After third-party installation or updates, run `./install.sh` and then
-`./sync-global-skills.sh`. App-bundled plugin and internal system skills remain
+After third-party installation or updates, run `./scripts/install.sh` and then
+`./scripts/sync-global-skills.sh`. App-bundled plugin and internal system skills remain
 managed by their own apps; they are not copied between clients.
 
 ### Local tooling and overlap policy
@@ -255,7 +257,7 @@ react-doctor --help
 `react-doctor` and all its specialist skills remain globally available. Installing
 skill instructions alone does not install the executable.
 
-`install.sh` reapplies `scripts/apply-skill-policy.py` after skill installation.
+`scripts/install.sh` reapplies `scripts/apply-skill-policy.py` after skill installation.
 It makes `context7-cli` and `code-review` explicit-only in Claude/Cursor frontmatter
 and Codex invocation policy, preserving their content and supporting references.
 Use `find-docs` for ordinary documentation lookup and `timb-diff-review` for the

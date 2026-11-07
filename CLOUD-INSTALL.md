@@ -1,6 +1,6 @@
 # Install skills in cloud agents
 
-The local `install.sh` links folders on your Mac. Cloud agents need their own
+The local `scripts/install.sh` links folders on your Mac. Cloud agents need their own
 copy of the skills and any required command-line tools. These instructions cover
 personal `timb-*` skills and the third-party packages listed in [README.md](README.md#recommended-third-party-tooling-and-skills).
 
