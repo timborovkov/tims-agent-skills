@@ -1,333 +1,282 @@
 # personal-skills
 
-Reusable AI skills, kept in one place and symlinked into every tool that uses
-them (Claude Code, Cursor, Codex, OpenCode, Hermes). One source of truth, no
-copy-paste drift.
+Reusable agent skills for coding, design, writing, and shipping. This repository
+owns the `timb-*` workflows and links them into Claude Code, Cursor, Codex,
+OpenCode, and Hermes. Third-party skills stay with their upstream publishers.
 
-The `timb-` prefix identifies this collection, not the intended user. Skills work
-with the invoking user's goals, voice, and project conventions. Personal examples,
-account history, and machine-specific settings belong in user or project context.
+The `timb-` prefix identifies the collection. Skills use the invoking user's
+context; personal history and machine-specific settings belong outside them.
 
-Lives at `~/Desktop/Projects/personal-skills/`. The install script normally
-uses its own location, but if it is run from a disposable Codex worktree it
-falls back to the stable checkout so global skill links do not point at a
-worktree that may be deleted.
-
-## Layout
-
-```
-personal-skills/
-├── scripts/
-│   ├── install.sh             # install personal skills across tools
-│   ├── sync-global-skills.sh  # reconcile the shared skill collection
-│   └── apply-skill-policy.py  # apply explicit-invocation policy
-├── timb-handoff-and-follow-up/
-│   ├── SKILL.md          # end-of-session handoff + follow-up workflow
-│   └── aliases           # optional legacy / short names
-└── timb-<next-skill>/
-    └── SKILL.md
-```
-
-Each skill is a folder with at minimum a `SKILL.md` (YAML frontmatter +
-markdown body). Extra files (scripts, templates) live next to it.
-
-For Codex Cloud, Cursor Cloud Agents, and Grok Bot, see
-[Cloud installation](CLOUD-INSTALL.md).
-
-## Install
+## Start here
 
 ```bash
 ./scripts/install.sh
 ```
 
-Idempotent. Re-run after adding a new skill folder. Creates skill directories for Claude Code, Cursor, Codex, and OpenCode. Hermes is included when installed.
+Run from a stable checkout. The installer links each top-level skill and its
+aliases into the supported tools, repairs stale links, and refuses to overwrite
+regular files or directories. Re-running it is safe.
 
-If you intentionally want to install from a non-default checkout, set:
-
-```bash
-PERSONAL_SKILLS_SOURCE_DIR=/path/to/personal-skills ./scripts/install.sh
-```
-
-If you are deliberately testing from a Codex worktree, set:
-
-```bash
-PERSONAL_SKILLS_ALLOW_WORKTREE_SOURCE=1 ./scripts/install.sh
-```
-
-What it does:
-- Finds every `<name>/SKILL.md` in this directory
-- For each, creates a symlink at:
-  - `~/.agents/skills/<name>` (shared source/discovery)
-  - `~/.claude/skills/<name>`
-  - `~/.cursor/skills/<name>`
-  - `~/.codex/skills/<name>`
-  - `~/.config/opencode/skills/<name>`
-  - `~/.hermes/skills/<name>` (only if `~/.hermes` exists)
-- Also creates aliases listed in `<name>/aliases` (one alias per line)
-- Fixes stale symlinks pointing at old locations
-- Leaves existing correct symlinks alone
-- Refuses to overwrite non-symlink files (safety)
-
-## Sync global skill dirs
-
-```bash
-./scripts/sync-global-skills.sh
-```
-
-Use this when a skill was created inside any one tool's skills directory and
-the other tools should point at the same original. The script includes the shared `~/.agents/skills` source and scans Claude,
-Cursor, Codex, OpenCode, and Hermes skill dirs, picks the real skill directory
-as the source, and symlinks the other locations to it. If all copies are
-already symlinks, it reuses the shared resolved target. It refuses ambiguous
-cases such as two different real directories for the same skill name. Hermes is
-included only when `~/.hermes` exists.
-
-Preview without changes:
-
-```bash
-./scripts/sync-global-skills.sh --dry-run
-```
-
-## Adding a new skill
-
-1. `mkdir timb-<new-skill-name>` inside this repo
-2. Write `timb-<new-skill-name>/SKILL.md` with frontmatter:
-   ```yaml
-   ---
-   name: timb-<new-skill-name>
-   description: >-
-     One paragraph explaining when to use this skill. Mention concrete trigger
-     phrases. Be explicit about when NOT to use it.
-   ---
-   ```
-3. Write the body — the model reads this as the skill's instructions.
-4. Run `./scripts/install.sh` to fan out the symlink.
-5. Commit the new skill folder.
-
-## Available skills
-
-| Skill | Description |
+| Tool | Skill directory |
 |---|---|
-| `timb-ship` | Explicit shipping command: scoped cleanup, review, relevant React Doctor checks, validation, docs, commit/push, PR, and CI/review follow-through. Replaces contribution-workflow and trim; legacy contribution aliases are removed. Alias: `ship`. |
-| `timb-diff-review` | Read-only, high-signal review of the current branch/worktree against the merge base with main/master/default branch. Verifies introduced defects, ranks findings P0-P3 with 0-100 confidence, and reports exact file/line evidence without changing code. Aliases: `diff-review`, `review-changes`, `branch-review`. |
-| `timb-document-release` | Repository-wide documentation release: inventories every maintained docs surface, refreshes stale content from code and release evidence, regenerates derived docs, and verifies links, formatting, builds, and the final diff. Aliases: `document-release`, `release-docs`, `docs-release`, `refresh-docs`. |
-| [`timb-finnish`](timb-finnish/SKILL.md) | Write, translate, proofread, and naturalize Finnish text. Combines Finnish grammar, typography, and register-aware style editing, with self-contained references for spelling, sentence structure, inflection, word choice, lists, punctuation, and formatting. |
-| `timb-handoff-and-follow-up` | Explicit handoff command: save current context, evidence, constraints, and next steps. No compulsory sync, docs sweep, or agent-count question. Alias: `handoff`. |
-| `timb-in-repo-docs` | Write and maintain in-repo docs. HTML in `docs/` for briefs/guides/explainers/architecture (styled per `design.md`, visual-first), markdown for TODOs/READMEs/CHANGELOG, and a consumer check before touching any `.md` that's used as page content. Two flows: author a single doc, or run a structural sweep across the whole repo. Aliases: `in-repo-docs`, `docs-sweep`. |
-| `timb-project-preferences` | Default repo setup preferences: Bun/Turbo, TypeScript frontends chosen by project shape, Vite + React for lightweight apps, Next.js when its routing/SSR/server conventions help, Tailwind + shadcn/ui, Vitest, AI/data/deploy defaults, docs/TODO/contribution workflow, and i13n/i18n by default unless the project or user specifies otherwise. Aliases: `project-preferences`, `project-defaults`, `setup-preferences`, `repo-defaults`. |
-| `timb-test-strategy` | Testing strategy for adding, reviewing, and improving meaningful tests across unit, integration, API, DB, E2E, CI, and AI/agent eval layers. Aliases: `test-strategy`, `tests`, `testing`, `coverage`, `test-review`. |
-| `timb-untangle-codebase` | Untangle a whole codebase in one pass so later agent work reads less, breaks less, and debugs faster. Asks whether to also clean restating comments and weak tests. Adapted from [caldoai/skills `untangle-codebase`](https://github.com/caldoai/skills/blob/main/skills/untangle-codebase/SKILL.md). Aliases: `untangle-codebase`, `untangle`. |
-| `timb-upstream-sync` | Merge/rebase from upstream safely while preserving both branch and upstream intent, resolving conflicts semantically, applying cross-cutting upstream requirements such as i13n/i18n to branch code, validating, updating docs/TODOs, and pushing. Aliases: `upstream-sync`, `sync-upstream`, `merge-upstream`, `rebase-upstream`. |
-| [`timb-x`](timb-x/SKILL.md) | X posts, replies, quote posts, threads, editing, content planning, profile reviews, performance analysis, and optional reach experiments in the user's or brand's voice. Combines selected ideas from viral-x-posts and x-skills; publishing requires an available authenticated tool and authorization. |
+| Shared discovery | `~/.agents/skills` |
+| Claude Code | `~/.claude/skills` |
+| Cursor | `~/.cursor/skills` |
+| Codex | `~/.codex/skills` |
+| OpenCode | `~/.config/opencode/skills` |
+| Hermes, when installed | `~/.hermes/skills` |
 
-## Recommended third-party tooling and skills
+The installer normally uses its own checkout. From a disposable Codex worktree,
+it falls back to `~/Desktop/Projects/personal-skills` so links survive worktree
+removal. Override the source deliberately with
+`PERSONAL_SKILLS_SOURCE_DIR=/path/to/personal-skills ./scripts/install.sh`.
+For worktree testing, use `PERSONAL_SKILLS_ALLOW_WORKTREE_SOURCE=1`.
 
-Railway is the default deployment and production-operations platform. Install
-the Railway CLI with agent support so coding agents can deploy, inspect status,
-read build and runtime logs, view metrics, manage configuration, use SSH, and
-debug services with the current `use-railway` skill and Railway MCP integration:
+For hosted agents, see [Cloud installation](CLOUD-INSTALL.md).
+
+## Skills in this repository
+
+| Skill | Use it for | Main alias |
+|---|---|---|
+| [timb-ship](timb-ship/SKILL.md) | Finish a change: cleanup, review, validation, docs, commit, PR, and CI/review follow-through. | `ship` |
+| [timb-diff-review](timb-diff-review/SKILL.md) | Read-only review of introduced defects, with severity, confidence, and file evidence. | `diff-review` |
+| [timb-document-release](timb-document-release/SKILL.md) | Refresh every maintained documentation surface for a release. | `document-release` |
+| [timb-handoff-and-follow-up](timb-handoff-and-follow-up/SKILL.md) | Save context, evidence, constraints, and next steps for another session. | `handoff` |
+| [timb-in-repo-docs](timb-in-repo-docs/SKILL.md) | Write repository docs and READMEs, or review their structure. | `in-repo-docs` |
+| [timb-project-preferences](timb-project-preferences/SKILL.md) | Apply project setup defaults for the stack, infrastructure, design, and workflow. | `project-preferences` |
+| [timb-test-strategy](timb-test-strategy/SKILL.md) | Choose meaningful tests and verification across application and AI systems. | `test-strategy` |
+| [timb-untangle-codebase](timb-untangle-codebase/SKILL.md) | Perform an explicitly requested structural cleanup of a whole codebase. | `untangle` |
+| [timb-upstream-sync](timb-upstream-sync/SKILL.md) | Merge or rebase upstream while preserving both sides' intent. | `upstream-sync` |
+| [timb-finnish](timb-finnish/SKILL.md) | Write, translate, proofread, and naturalize Finnish. | — |
+| [timb-x](timb-x/SKILL.md) | Draft and edit X posts, replies, threads, and content plans. | — |
+
+Additional aliases live in each skill's `aliases` file. Shipping, handoff, and
+whole-codebase untangling require explicit invocation; they are not automatic
+end-of-task steps.
+
+## Recommended third-party skills and tools
+
+**Sources reviewed: 16 November 2026.** These are recommendations, not an
+inventory of what is installed. Each package link leads to its current setup
+instructions. Skill names and installation methods change; check upstream before
+updating an existing installation.
+
+Choose packages for the work you do. A skill supplies guidance; a CLI supplies
+an executable. Some publishers bundle skills, hooks, and MCP servers in a plugin
+or dedicated installer. Use one installation method per package and agent to
+avoid duplicate discovery.
+
+### Design and interfaces
+
+| Package | When to choose it | Entry point |
+|---|---|---|
+| [Impeccable](https://github.com/pbakaus/impeccable) | Build or refine interfaces, review UX, audit accessibility, and improve typography, layout, copy, or polish. | `impeccable critique` or `impeccable polish` with a target. |
+| [Emil Kowalski's skills](https://github.com/emilkowalski/skills) | Motion and interaction design: easing, timing, gestures, choreography, performance, and mobile behavior. | `ask-emil` to choose a workflow; `emil-design-eng` for the main guidance. |
+| [Jakub Krehel's skills](https://github.com/jakubkrehel/skills) | Review an interface across disciplines, then address specific issues. | `better-interface`, with the `better-*` skills for UI, typography, colors, accessibility, layout, and writing. |
+| [Taste Skill](https://github.com/Leonxlnx/taste-skill) | Build or redesign a company website with a coherent visual direction, real assets, and browser verification. | `design-taste-frontend`. Requires Node.js 22+ and Chrome, Edge, or Chromium. |
+| [Imagegen skills](https://github.com/Leonxlnx/imagegen-skills) | Explore web/mobile design images or brand assets before implementation. | `imagegen-frontend-web`, `imagegen-frontend-mobile`, `brandkit`; `image-to-code` also implements the result. Requires image-generation capability. |
+
+Start with one lead workflow: Impeccable for general interface work, Emil for
+motion, or Taste Skill for a company website. Use Jakub's focused reviews when
+you need a particular discipline checked. This is a selection guide, not a
+requirement to run every package on every screen.
+
+Shared-skill installation examples:
+
+```bash
+bunx skills@latest add pbakaus/impeccable -g
+bunx skills@latest add emilkowalski/skills -g
+bunx skills@latest add jakubkrehel/skills -g
+bunx skills@latest add Leonxlnx/taste-skill --skill design-taste-frontend -g
+bunx skills@latest add Leonxlnx/imagegen-skills --skill image-to-code -g
+```
+
+For Impeccable's tool-specific integrations, use `npx impeccable install`
+instead of a second shared-skill install. Its installer offers project/global
+scope and design hooks; `npx impeccable update` updates that installation.
+A copied skill alone does not install hooks or subagents. Project initialization
+is separate: `$impeccable init` in Codex, or `/impeccable init` in agents using
+slash commands. See the [installation guide](https://impeccable.style/#downloads).
+
+### Engineering, documentation, and browser work
+
+| Package | Recommended use | Setup |
+|---|---|---|
+| [React Doctor](https://github.com/millionco/react-doctor) | Deterministic React checks for state/effects, performance, architecture, accessibility, and maintainability. | Scan with `npx react-doctor@latest`; install agent guidance with `npx react-doctor@latest install`. |
+| [Matt Pocock's skills](https://github.com/mattpocock/skills) | Specification, debugging, TDD, domain modeling, architecture, and implementation workflows. | Start with `ask-matt`; configure a project with `setup-matt-pocock-skills`. |
+| [Vercel Agent Skills](https://github.com/vercel-labs/agent-skills) | React and React Native guidance, composition patterns, view transitions, web/writing reviews, Vercel optimization, and deployment. | Select the relevant skills from the package. |
+| [Context7](https://github.com/upstash/context7) | Current library documentation and examples. | `npx ctx7 setup`; choose CLI + Skills or MCP. Requires Node.js 22.13+. |
+| [Playwright CLI](https://github.com/microsoft/playwright-cli) | Browser interaction, screenshots, debugging, and flow verification from a coding agent. | `npm install -g @playwright/cli@latest`, then `playwright-cli install --skills` in the intended project. Requires Node.js 20+. |
+
+```bash
+bunx skills@latest add mattpocock/skills -g
+bunx skills@latest add vercel-labs/agent-skills -g
+```
+
+Matt's current workflows include `to-spec`, `to-tickets`, `implement`,
+`diagnosing-bugs`, `tdd`, and `prototype`. Select deliberately: the repository's
+own `ship`, `handoff`, and review workflows remain the defaults here.
+
+For global Playwright guidance managed alongside the other shared skills, use
+`bunx skills@latest add microsoft/playwright-cli --skill playwright-cli -g`
+instead of also creating a project copy. The executable is still required.
+Context7's setup handles authentication and installs guidance for the selected
+mode; installing a skill alone does not configure access.
+
+### Video, motion graphics, and launch content
+
+| Package | When to choose it | Entry point |
+|---|---|---|
+| [HyperFrames](https://github.com/heygen-com/hyperframes) | HTML-based video compositions, demos, explainers, captions, and motion graphics. | `hyperframes`; `hyperframes-cli`, `hyperframes-registry`, and `media-use` cover execution, components, and assets/audio. |
+| [Remotion skills](https://github.com/remotion-dev/skills) | React-based video and existing Remotion projects. | `remotion-best-practices` routes to creation, markup, Studio, rendering, captions, maps, and other specialists. |
+| [brag](https://github.com/latent-spaces/brag) | Turn a project into a launch video with soundtrack and share copy. | `brag` for the full workflow; `brag-slim` is a newer alternative without HyperFrames or bundled assets. |
+
+For a new HyperFrames setup:
+
+```bash
+npm install -g hyperframes
+hyperframes doctor
+hyperframes skills update
+```
+
+The publisher's core set now includes six skills: the four above plus
+`reverse-any-video` and `style-sampling`, which require HyperFrames Pro.
+`hyperframes skills update` installs release-matched core skills and refreshes
+already installed optional skills. `figma`, `slideshow`, and
+`remotion-to-hyperframes` are available on demand. See the
+[skills guide](https://github.com/heygen-com/hyperframes/blob/main/docs/guides/skills.mdx)
+before changing an installation managed by another installer.
+
+HyperFrames requires Node.js 22+ and FFmpeg. Run `hyperframes doctor` to check
+rendering dependencies and optional media tools. The classic `brag` workflow
+also uses HyperFrames and FFmpeg; check the chosen `brag` variant's requirements.
+
+```bash
+bunx skills@latest add remotion-dev/skills -g
+bunx skills@latest add latent-spaces/brag --skill brag brag-slim -g
+```
+
+In an existing Remotion project, `npx remotion skills add` is the native
+installation route. Keep Remotion dependencies in that project.
+
+### Deployment and operations
+
+**Railway is the default deployment platform for this collection.** The
+[Railway CLI](https://github.com/railwayapp/cli) installer can configure skills
+and authenticated MCP access for detected agents:
 
 ```bash
 bash <(curl -fsSL https://railway.com/install.sh) --agents -y
 ```
 
-If the CLI is already installed, add or refresh its agent tooling with:
+For an existing CLI, use `railway setup agent -y`. The `use-railway` skill covers
+deployments, configuration, logs, metrics, SSH, databases, and debugging.
+`railway skills update` reviews skill updates, including locally modified copies
+that automatic updates skip. See [Railway skills](https://github.com/railwayapp/railway-skills).
+
+For **Cloudflare**, follow the [official agent setup guide](https://developers.cloudflare.com/agent-setup/prompt.md)
+and [Cloudflare skills](https://github.com/cloudflare/skills). The package covers
+Workers, frameworks, Agents SDK, Durable Objects, networking, and operations.
+Native plugins bundle guidance and MCP; standalone skill installs need MCP
+configuration separately.
 
 ```bash
-railway setup agent -y
-```
-
-### Cloudflare
-
-Follow the current [official agent setup instructions](https://developers.cloudflare.com/agent-setup/prompt.md)
-for Cloudflare skills, MCP, and the optional beta `cf` CLI. Install the skills
-globally for Codex and Cursor on this machine:
-
-```bash
-bunx skills add cloudflare/skills --skill '*' --yes --global --agent codex cursor
-codex mcp add cloudflare --url https://mcp.cloudflare.com/mcp
-codex mcp login cloudflare
-bun add --global cf
+npm install -g cf
 cf auth login
 ```
 
-Add `"cloudflare": { "url": "https://mcp.cloudflare.com/mcp" }` under
-`mcpServers` in `~/.cursor/mcp.json`, preserving existing servers. Cursor
-requests OAuth authorization on first use; restart agents after MCP setup.
-In each agent's user-level instructions, use Cloudflare's preference:
+Repository preference:
 
 > When interacting with Cloudflare, use the cf CLI unless the project has a Wrangler configuration file.
 
-The Skills CLI stores these skills in `~/.agents/skills`. Keep any explicit
-links in `~/.codex/skills` and `~/.cursor/skills` pointing to that shared source.
-For other agents, follow the agent-specific setup in the official guide;
-Claude Code uses `claude plugin marketplace add cloudflare/skills` followed by
-`claude plugin install cloudflare@cloudflare` and `/reload-plugins`.
+The `cf` CLI is in beta. For a shared standalone skills setup, install with
+`bunx skills@latest add cloudflare/skills --skill '*' -g` and follow the official
+guide for your agent's MCP configuration. Authentication is a separate step.
+Use Vercel's deployment and optimization skills above when the project runs on
+Vercel.
 
-### Other skill packages
+### Marketing and growth
 
-Install the remaining third-party skills globally with the Skills CLI. These
-skills are **not** vendored in this repo — keep them updated with
-`bunx skills update`.
-
-```bash
-bunx skills add jakubkrehel/skills -g -y
-bunx skills add millionco/react-doctor -g -y
-bunx skills add mattpocock/skills -g -y
-bunx skills add upstash/context7@find-docs -g -y
-bunx skills add remotion-dev/skills -g -y
-bunx skills add heygen-com/hyperframes --skill hyperframes hyperframes-cli hyperframes-registry media-use -g -y
-bunx skills add vercel-labs/agent-skills -g -y
-bunx skills add Leonxlnx/taste-skill --skill design-taste-frontend -g -y
-bunx skills add Leonxlnx/imagegen-skills --skill image-to-code -g -y
-bunx skills add microsoft/playwright-cli --skill playwright-cli -g -y
-bunx skills add latent-spaces/brag --skill brag -g -y
-bunx skills add coreyhaines31/marketingskills -g -y
-```
-
-Emil Kowalski's [design and animation skills](https://github.com/emilkowalski/skills)
-are also recommended. Start with `emil-design-eng`; the package includes animation
-creation, review, performance, gestures, mobile UI, Sonner, and Swift guidance.
-To install through the Skills CLI, run:
+[Corey Haines' Marketing Skills](https://github.com/coreyhaines31/marketingskills)
+cover copy, SEO, conversion, analytics, acquisition, retention, pricing, and
+sales. Start with `product-marketing` for shared product/audience context, then
+choose a specialist such as `copywriting`, `seo-audit`, `cro`, or `social`.
 
 ```bash
-bunx skills add emilkowalski/skills -g
+bunx skills@latest add coreyhaines31/marketingskills -g
 ```
 
-Select the skills interactively and skip `prototype` if Matt Pocock's skill is
-already installed under that name. On this machine, all 19 skills are installed
-in `~/.agents/skills`; Emil's `prototype` is named `emil-prototype` in both its
-folder and frontmatter so both versions remain available. This package was
-installed with Codex's `skill-installer` helper, so refresh it with that helper
-rather than relying on `bunx skills update`, preserving the renamed prototype.
+The current context file is `.agents/product-marketing.md`. Live marketing
+accounts and external tools need their own connections; the skills do not grant
+account access.
 
-[Impeccable](https://impeccable.style/) is recommended for frontend design,
-UX critique, accessibility audits, typography, layout, polish, and motion. It
-ships as one `impeccable` skill with subcommands, so `impeccable animate` does
-not collide with Emil's standalone `animate` skill.
+## Updates, shared links, and overlaps
 
-```bash
-bunx skills add pbakaus/impeccable -g -y
-```
+Use the installer that owns each package:
 
-On this machine, the shared `.agents/skills/impeccable` bundle was installed
-with Codex's `skill-installer` helper and linked across tools. Refresh this
-installation with the helper. In Codex, try `$impeccable critique` or
-`$impeccable polish` followed by a target. Project initialization and automatic
-design hooks are separate setup steps; see the
-[official installation guide](https://impeccable.style/#downloads).
-
-Playwright's skill also needs its CLI:
-
-```bash
-npm install -g @playwright/cli@latest
-playwright-cli --version
-```
-
-Taste Skill requires Node.js 22+ and Chrome, Edge, or Chromium. Image-to-Code
-lives in `Leonxlnx/imagegen-skills` after moving out of the Taste Skill repo.
-`brag` requires Node.js 22+, FFmpeg on `PATH`, and Hyperframes (`npm install -g
-hyperframes`; check readiness with `hyperframes doctor`).
-
-### Video and motion workflows
-
-Use [HyperFrames](https://github.com/heygen-com/hyperframes) for HTML-based
-videos, product demos, explainers, motion graphics, captions, and overlays.
-Start with `hyperframes`; its core companions are `hyperframes-cli` for preview,
-validation and rendering, `hyperframes-registry` for editable motion components,
-and `media-use` for images, footage, voiceover, music and sound effects.
-
-```bash
-npm install -g hyperframes
-hyperframes doctor
-```
-
-The four core skills are installed globally on this machine through Codex's
-`skill-installer` helper, with shared sources in `~/.agents/skills` and links
-across coding tools. Refresh this installation with the helper, then rerun this
-repo's install and sync scripts. The official `hyperframes skills update`
-command is an alternative installer that manages its own global skill store.
-
-Choose the workflow by the output:
-
-- **HyperFrames:** HTML/CSS-based video compositions and rendered motion graphics.
-- **Remotion:** video built with React, especially existing Remotion projects.
-- **`brag`:** a project launch video with music, motion, and share copy using HyperFrames.
-
-Optional HyperFrames skills include `remotion-to-hyperframes` for migration,
-`figma` for design-to-motion, and `slideshow` for navigable decks. Install these
-when needed; the core bundle covers general video creation. See the
-[official skills guide](https://github.com/heygen-com/hyperframes/blob/main/docs/guides/skills.mdx).
-
-To install only the Railway skill without the CLI or MCP integration:
-
-```bash
-bunx skills add railwayapp/railway-skills@use-railway -g -y
-```
-
-| Tool or package | Key capabilities |
+| Installation | Update route |
 |---|---|
-| [Railway CLI](https://github.com/railwayapp/cli) + [railwayapp/railway-skills](https://github.com/railwayapp/railway-skills) | Preferred deployment and operations tooling. The `use-railway` skill covers deploys, configuration, logs, metrics, SSH, databases, domains, and build/runtime debugging. |
-| [Cloudflare CLI](https://developers.cloudflare.com/cf/) + [cloudflare/skills](https://github.com/cloudflare/skills) + [MCP](https://github.com/cloudflare/mcp) | Cloudflare API operations with `cf`, remote MCP access, and skills for Workers, Wrangler, Durable Objects, Agents SDK, networking, and performance. Use Wrangler when the project has a Wrangler configuration. |
-| [jakubkrehel/skills](https://github.com/jakubkrehel/skills) | `better-interface`, `better-ui`, `better-typography`, `better-colors`, `better-accessibility`, `better-layout`, `better-writing` — holistic interface review plus focused UI polish, typography, color, accessibility, layout, and product-writing guidance. |
-| [emilkowalski/skills](https://github.com/emilkowalski/skills) | `emil-design-eng` plus focused skills for animation creation, review, choreography, performance, gestures, mobile UI, UI stress testing, Sonner, and Swift. Emil’s UI-variant `prototype` is installed locally as `emil-prototype` to preserve Matt Pocock’s skill. |
-| [Impeccable / pbakaus/impeccable](https://github.com/pbakaus/impeccable) | One `impeccable` skill for frontend design, UX critique, accessibility audits, typography, layout, motion, and final polish, with project context and design-system guidance. |
-| [millionco/react-doctor](https://github.com/millionco/react-doctor) | `react-doctor` — React/Next health scoring and cleanup. Pairs with `timb-project-preferences`. |
-| [mattpocock/skills](https://github.com/mattpocock/skills) | `grill-me`, `grill-with-docs`, `tdd`, `diagnose`, `prototype`, `to-prd`, `to-issues`, `triage`, `improve-codebase-architecture`, `setup-matt-pocock-skills`, `write-a-skill`. Matt's `handoff` overlaps naming with `timb-handoff-and-follow-up`. |
-| [upstash/context7](https://github.com/upstash/context7) | `find-docs` — live library docs via Context7. |
-| [heygen-com/hyperframes](https://github.com/heygen-com/hyperframes) | `hyperframes`, `hyperframes-cli`, `hyperframes-registry`, `media-use` — HTML-based video creation, motion graphics, captions, reusable components, media/audio, preview, validation, and rendering. |
-| [remotion-dev/skills](https://github.com/remotion-dev/skills) | `remotion-best-practices` — Remotion video-in-React. |
-| [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | `vercel-react-best-practices`, `vercel-composition-patterns`, `vercel-react-native-skills`, `web-design-guidelines`. |
-| [Taste Skill](https://github.com/Leonxlnx/taste-skill) | `design-taste-frontend` — art direction, coherent visual systems, real assets, and browser checks for websites. |
-| [Image-to-Code](https://github.com/Leonxlnx/imagegen-skills/tree/main/skills/image-to-code) | `image-to-code` — generate visual references, analyze them, and implement a matching website. |
-| [Playwright CLI](https://github.com/microsoft/playwright-cli) | `playwright-cli` — browser automation, screenshots, debugging, and test generation through a CLI and companion skill. |
-| [latent-spaces/brag](https://github.com/latent-spaces/brag) | `brag` — turn a project into a launch video with music, motion, and share copy using Hyperframes. |
-| [coreyhaines31/marketingskills](https://github.com/coreyhaines31/marketingskills) | Marketing strategy, website copywriting and editing, SEO, conversion optimization, social content, cold email, and sales enablement. Start with `product-marketing` for shared product context, then use `copywriting`, `copy-editing`, `social`, or the relevant specialist skill. |
+| This repository's `timb-*` skills | Update the checkout, then run `./scripts/install.sh`. |
+| Skills CLI | `bunx skills@latest update`; rerun `add` to select newly published skills. |
+| Native plugin | Use that agent's plugin manager. |
+| Publisher CLI | Follow its update command, such as `impeccable update` or `hyperframes skills update`. |
+| Manual copy or Codex skill-installer helper | Refresh from upstream explicitly, preserving local changes; do not assume the Skills CLI tracks it. |
 
-This repo's `timb-*` skills are installed with `./scripts/install.sh`, not `bunx skills add`.
-
-## Workflow policy and retired skills
-
-`ship` resolves to `timb-ship`, not the third-party React Doctor shipping workflow.
-React Doctor and its specialist skills remain available globally. `timb-trim` is
-retired; its public-API and meaningful-verification safeguards live in `timb-ship`.
-Old contribution-workflow names and the redundant third-party `matt-handoff` are retired.
-Use `timb-ship` / `ship` and `timb-handoff-and-follow-up` / `handoff`.
-
-Shipping and handoff are explicit commands packaged as portable skills:
-`disable-model-invocation: true` plus Codex's
-`agents/openai.yaml` `allow_implicit_invocation: false`. Invoke them by name;
-clients may expose different slash or dollar command syntax.
-
-`disabled-skills.txt` excludes skills from global synchronization. Context7 MCP is
-disabled on this machine because it is not configured; `find-docs` and
-`context7-cli` remain available for CLI lookup/setup. Remove the exclusion and
-restore/install that skill if MCP becomes available. Third-party updates may
-restore retired skills; rerun installation and inspect the sync preview afterward.
-The sync reports excluded installed entries for cleanup; it never deletes them.
-
-After third-party installation or updates, run `./scripts/install.sh` and then
-`./scripts/sync-global-skills.sh`. App-bundled plugin and internal system skills remain
-managed by their own apps; they are not copied between clients.
-
-### Local tooling and overlap policy
-
-Install the React Doctor CLI locally as well as its skill:
+After changing shared standalone skills:
 
 ```bash
-bun add --global react-doctor@latest
-react-doctor --version
-react-doctor --help
+./scripts/install.sh
+./scripts/sync-global-skills.sh --dry-run
+./scripts/sync-global-skills.sh
 ```
 
-`react-doctor` and all its specialist skills remain globally available. Installing
-skill instructions alone does not install the executable.
+The sync script discovers one original directory per skill and links other tools
+to it. It refuses multiple real copies with the same name. Resolve those
+conflicts before applying; do not delete a copy until its contents and owner are
+understood. App-bundled plugin and internal system skills remain app-managed.
 
-`scripts/install.sh` reapplies `scripts/apply-skill-policy.py` after skill installation.
-It makes `context7-cli` and `code-review` explicit-only in Claude/Cursor frontmatter
-and Codex invocation policy, preserving their content and supporting references.
-Use `find-docs` for ordinary documentation lookup and `timb-diff-review` for the
-personal review workflow. Context7 setup and the alternative Standards/Spec review
-remain available when explicitly requested or called by their parent workflows.
-Keep `interface-review` and the `better-*` family together: they depend on one
-another and cover change scope versus individual UI disciplines.
+Overlap rules for this collection:
+
+- `ship` and `handoff` resolve to this repository's workflows. Skip conflicting
+  third-party names during installation. Retired names are listed in
+  [disabled-skills.txt](disabled-skills.txt); the sync reports excluded entries
+  but does not remove them.
+- Emil and Matt both publish `prototype`. The local convention is
+  `emil-prototype` for Emil's version, renamed in both folder and frontmatter.
+  Preserve that rename when refreshing; it is not an upstream skill name.
+- Impeccable's `animate` is a subcommand, so it can coexist with Emil's standalone
+  `animate` skill.
+- The [policy script](scripts/apply-skill-policy.py), run by `install.sh`, makes
+  `context7-cli` and `code-review` explicit-only when present in the shared store.
+  Use `find-docs` for the existing ordinary docs workflow and `timb-diff-review`
+  for repository reviews. Context7 MCP remains excluded by this repository's
+  current policy; revisit that exclusion when configuring MCP.
+- Keep related skill bundles together when their entry point calls companion
+  skills. In particular, retain the `better-*` family for `better-interface`.
+
+## Add a skill
+
+Create a top-level folder containing `SKILL.md`:
+
+```text
+personal-skills/
+├── scripts/
+│   ├── install.sh
+│   ├── sync-global-skills.sh
+│   └── apply-skill-policy.py
+└── timb-example/
+    ├── SKILL.md
+    ├── aliases          # optional, one name per line
+    └── references/      # optional supporting material
+```
+
+```yaml
+---
+name: timb-example
+description: Explain when to use this skill and when to skip it.
+---
+```
+
+Write the workflow beneath the frontmatter, add any supporting files, and run
+`./scripts/install.sh`. Check the generated links before committing. Keep skill
+instructions portable and put local account details in user or project context.
