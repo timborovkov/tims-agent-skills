@@ -176,6 +176,7 @@ bunx skills add millionco/react-doctor -g -y
 bunx skills add mattpocock/skills -g -y
 bunx skills add upstash/context7@find-docs -g -y
 bunx skills add remotion-dev/skills -g -y
+bunx skills add heygen-com/hyperframes --skill hyperframes hyperframes-cli hyperframes-registry media-use -g -y
 bunx skills add vercel-labs/agent-skills -g -y
 bunx skills add Leonxlnx/taste-skill --skill design-taste-frontend -g -y
 bunx skills add Leonxlnx/imagegen-skills --skill image-to-code -g -y
@@ -183,6 +184,38 @@ bunx skills add microsoft/playwright-cli --skill playwright-cli -g -y
 bunx skills add latent-spaces/brag --skill brag -g -y
 bunx skills add coreyhaines31/marketingskills -g -y
 ```
+
+Emil Kowalski's [design and animation skills](https://github.com/emilkowalski/skills)
+are also recommended. Start with `emil-design-eng`; the package includes animation
+creation, review, performance, gestures, mobile UI, Sonner, and Swift guidance.
+To install through the Skills CLI, run:
+
+```bash
+bunx skills add emilkowalski/skills -g
+```
+
+Select the skills interactively and skip `prototype` if Matt Pocock's skill is
+already installed under that name. On this machine, all 19 skills are installed
+in `~/.agents/skills`; Emil's `prototype` is named `emil-prototype` in both its
+folder and frontmatter so both versions remain available. This package was
+installed with Codex's `skill-installer` helper, so refresh it with that helper
+rather than relying on `bunx skills update`, preserving the renamed prototype.
+
+[Impeccable](https://impeccable.style/) is recommended for frontend design,
+UX critique, accessibility audits, typography, layout, polish, and motion. It
+ships as one `impeccable` skill with subcommands, so `impeccable animate` does
+not collide with Emil's standalone `animate` skill.
+
+```bash
+bunx skills add pbakaus/impeccable -g -y
+```
+
+On this machine, the shared `.agents/skills/impeccable` bundle was installed
+with Codex's `skill-installer` helper and linked across tools. Refresh this
+installation with the helper. In Codex, try `$impeccable critique` or
+`$impeccable polish` followed by a target. Project initialization and automatic
+design hooks are separate setup steps; see the
+[official installation guide](https://impeccable.style/#downloads).
 
 Playwright's skill also needs its CLI:
 
@@ -196,6 +229,36 @@ lives in `Leonxlnx/imagegen-skills` after moving out of the Taste Skill repo.
 `brag` requires Node.js 22+, FFmpeg on `PATH`, and Hyperframes (`npm install -g
 hyperframes`; check readiness with `hyperframes doctor`).
 
+### Video and motion workflows
+
+Use [HyperFrames](https://github.com/heygen-com/hyperframes) for HTML-based
+videos, product demos, explainers, motion graphics, captions, and overlays.
+Start with `hyperframes`; its core companions are `hyperframes-cli` for preview,
+validation and rendering, `hyperframes-registry` for editable motion components,
+and `media-use` for images, footage, voiceover, music and sound effects.
+
+```bash
+npm install -g hyperframes
+hyperframes doctor
+```
+
+The four core skills are installed globally on this machine through Codex's
+`skill-installer` helper, with shared sources in `~/.agents/skills` and links
+across coding tools. Refresh this installation with the helper, then rerun this
+repo's install and sync scripts. The official `hyperframes skills update`
+command is an alternative installer that manages its own global skill store.
+
+Choose the workflow by the output:
+
+- **HyperFrames:** HTML/CSS-based video compositions and rendered motion graphics.
+- **Remotion:** video built with React, especially existing Remotion projects.
+- **`brag`:** a project launch video with music, motion, and share copy using HyperFrames.
+
+Optional HyperFrames skills include `remotion-to-hyperframes` for migration,
+`figma` for design-to-motion, and `slideshow` for navigable decks. Install these
+when needed; the core bundle covers general video creation. See the
+[official skills guide](https://github.com/heygen-com/hyperframes/blob/main/docs/guides/skills.mdx).
+
 To install only the Railway skill without the CLI or MCP integration:
 
 ```bash
@@ -207,9 +270,12 @@ bunx skills add railwayapp/railway-skills@use-railway -g -y
 | [Railway CLI](https://github.com/railwayapp/cli) + [railwayapp/railway-skills](https://github.com/railwayapp/railway-skills) | Preferred deployment and operations tooling. The `use-railway` skill covers deploys, configuration, logs, metrics, SSH, databases, domains, and build/runtime debugging. |
 | [Cloudflare CLI](https://developers.cloudflare.com/cf/) + [cloudflare/skills](https://github.com/cloudflare/skills) + [MCP](https://github.com/cloudflare/mcp) | Cloudflare API operations with `cf`, remote MCP access, and skills for Workers, Wrangler, Durable Objects, Agents SDK, networking, and performance. Use Wrangler when the project has a Wrangler configuration. |
 | [jakubkrehel/skills](https://github.com/jakubkrehel/skills) | `better-interface`, `better-ui`, `better-typography`, `better-colors`, `better-accessibility`, `better-layout`, `better-writing` — holistic interface review plus focused UI polish, typography, color, accessibility, layout, and product-writing guidance. |
+| [emilkowalski/skills](https://github.com/emilkowalski/skills) | `emil-design-eng` plus focused skills for animation creation, review, choreography, performance, gestures, mobile UI, UI stress testing, Sonner, and Swift. Emil’s UI-variant `prototype` is installed locally as `emil-prototype` to preserve Matt Pocock’s skill. |
+| [Impeccable / pbakaus/impeccable](https://github.com/pbakaus/impeccable) | One `impeccable` skill for frontend design, UX critique, accessibility audits, typography, layout, motion, and final polish, with project context and design-system guidance. |
 | [millionco/react-doctor](https://github.com/millionco/react-doctor) | `react-doctor` — React/Next health scoring and cleanup. Pairs with `timb-project-preferences`. |
 | [mattpocock/skills](https://github.com/mattpocock/skills) | `grill-me`, `grill-with-docs`, `tdd`, `diagnose`, `prototype`, `to-prd`, `to-issues`, `triage`, `improve-codebase-architecture`, `setup-matt-pocock-skills`, `write-a-skill`. Matt's `handoff` overlaps naming with `timb-handoff-and-follow-up`. |
 | [upstash/context7](https://github.com/upstash/context7) | `find-docs` — live library docs via Context7. |
+| [heygen-com/hyperframes](https://github.com/heygen-com/hyperframes) | `hyperframes`, `hyperframes-cli`, `hyperframes-registry`, `media-use` — HTML-based video creation, motion graphics, captions, reusable components, media/audio, preview, validation, and rendering. |
 | [remotion-dev/skills](https://github.com/remotion-dev/skills) | `remotion-best-practices` — Remotion video-in-React. |
 | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | `vercel-react-best-practices`, `vercel-composition-patterns`, `vercel-react-native-skills`, `web-design-guidelines`. |
 | [Taste Skill](https://github.com/Leonxlnx/taste-skill) | `design-taste-frontend` — art direction, coherent visual systems, real assets, and browser checks for websites. |
