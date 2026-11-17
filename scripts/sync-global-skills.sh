@@ -9,14 +9,6 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
-DISABLED_FILE="${REPO_DIR}/disabled-skills.txt"
-
-is_disabled() {
-  [[ -f "${DISABLED_FILE}" ]] && grep -Fxq "$1" "${DISABLED_FILE}"
-}
-
 ROOTS=(
   "${HOME}/.agents/skills"
   "${HOME}/.claude/skills"
@@ -24,6 +16,21 @@ ROOTS=(
   "${HOME}/.codex/skills"
   "${HOME}/.config/opencode/skills"
 )
+
+# Optional machine-local exclusions: one skill name per line.
+EXCLUDED_FILE="${PERSONAL_SKILLS_EXCLUDED_FILE:-${HOME}/.agents/skills-excluded.txt}"
+SHELF_DIR="${HOME}/.agents/skills-shelf"
+
+is_excluded() {
+  local name="$1" shelved
+  if [[ -f "${EXCLUDED_FILE}" ]] && grep -Fxq "${name}" "${EXCLUDED_FILE}"; then
+    return 0
+  fi
+  for shelved in "${SHELF_DIR}"/*/"${name}"/SKILL.md; do
+    [[ -f "${shelved}" ]] && return 0
+  done
+  return 1
+}
 
 if [[ -d "${HOME}/.hermes" ]]; then
   ROOTS+=("${HOME}/.hermes/skills")
@@ -87,8 +94,8 @@ for root in "${ROOTS[@]}"; do
   while IFS= read -r -d '' entry; do
     name="${entry##*/}"
     [[ "${name}" == .* ]] && continue
-    if is_disabled "${name}"; then
-      echo "excluded: ${entry} (remove or archive separately if still installed)"
+    if is_excluded "${name}"; then
+      echo "excluded: ${entry} (locally excluded or shelved)"
       continue
     fi
     is_skill "${entry}" || continue

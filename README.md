@@ -13,9 +13,9 @@ context; personal history and machine-specific settings belong outside them.
 ./scripts/install.sh
 ```
 
-Run from a stable checkout. The installer links each top-level skill and its
-aliases into the supported tools, repairs stale links, and refuses to overwrite
-regular files or directories. Re-running it is safe.
+Run from a stable checkout. The installer links each top-level skill into the
+supported tools, repairs stale links, and refuses to overwrite regular files or
+directories. Re-running it is safe.
 
 | Tool | Skill directory |
 |---|---|
@@ -36,30 +36,39 @@ For hosted agents, see [Cloud installation](CLOUD-INSTALL.md).
 
 ## Skills in this repository
 
-| Skill | Use it for | Main alias |
-|---|---|---|
-| [timb-ship](timb-ship/SKILL.md) | Finish a change: cleanup, review, validation, docs, commit, PR, and CI/review follow-through. | `ship` |
-| [timb-diff-review](timb-diff-review/SKILL.md) | Read-only review of introduced defects, with severity, confidence, and file evidence. | `diff-review` |
-| [timb-document-release](timb-document-release/SKILL.md) | Refresh every maintained documentation surface for a release. | `document-release` |
-| [timb-handoff-and-follow-up](timb-handoff-and-follow-up/SKILL.md) | Save context, evidence, constraints, and next steps for another session. | `handoff` |
-| [timb-in-repo-docs](timb-in-repo-docs/SKILL.md) | Write repository docs and READMEs, or review their structure. | `in-repo-docs` |
-| [timb-project-preferences](timb-project-preferences/SKILL.md) | Apply project setup defaults for the stack, infrastructure, design, and workflow. | `project-preferences` |
-| [timb-test-strategy](timb-test-strategy/SKILL.md) | Choose meaningful tests and verification across application and AI systems. | `test-strategy` |
-| [timb-untangle-codebase](timb-untangle-codebase/SKILL.md) | Perform an explicitly requested structural cleanup of a whole codebase. | `untangle` |
-| [timb-upstream-sync](timb-upstream-sync/SKILL.md) | Merge or rebase upstream while preserving both sides' intent. | `upstream-sync` |
-| [timb-finnish](timb-finnish/SKILL.md) | Write, translate, proofread, and naturalize Finnish. | — |
-| [timb-x](timb-x/SKILL.md) | Draft and edit X posts, replies, threads, and content plans. | — |
+| Skill | Use it for |
+|---|---|
+| [timb-ship](timb-ship/SKILL.md) | Finish a change: cleanup, review, validation, docs, commit, PR, and CI/review follow-through. |
+| [timb-diff-review](timb-diff-review/SKILL.md) | Read-only review of introduced defects, with severity, confidence, and file evidence. |
+| [timb-document-release](timb-document-release/SKILL.md) | Refresh every maintained documentation surface for a release. |
+| [timb-handoff-and-follow-up](timb-handoff-and-follow-up/SKILL.md) | Save context, evidence, constraints, and next steps for another session. |
+| [timb-in-repo-docs](timb-in-repo-docs/SKILL.md) | Write repository docs and READMEs, or review their structure. |
+| [timb-project-preferences](timb-project-preferences/SKILL.md) | Apply project setup defaults for the stack, infrastructure, design, and workflow. |
+| [timb-test-strategy](timb-test-strategy/SKILL.md) | Choose meaningful tests and verification across application and AI systems. |
+| [timb-untangle-codebase](timb-untangle-codebase/SKILL.md) | Perform an explicitly requested structural cleanup of a whole codebase. |
+| [timb-upstream-sync](timb-upstream-sync/SKILL.md) | Merge or rebase upstream while preserving both sides' intent. |
+| [timb-finnish](timb-finnish/SKILL.md) | Write, translate, proofread, and naturalize Finnish. |
+| [timb-x](timb-x/SKILL.md) | Draft and edit X posts, replies, threads, and content plans. |
 
-Additional aliases live in each skill's `aliases` file. Shipping, handoff, and
-whole-codebase untangling require explicit invocation; they are not automatic
+Folder names are the entry points. The installer removes old alias symlinks
+only when they point to the corresponding skill in this checkout. Shipping,
+handoff, and whole-codebase untangling require explicit invocation; they are not automatic
 end-of-task steps.
+
+## Temporarily inactive skills
+
+Keep skills you may want later outside the discovery directories, in
+`~/.agents/skills-shelf/<bundle>/<skill>/`. Sync skips names still on that shelf.
+See [SHELF.md](SHELF.md) for listing and restoring them. This is local state;
+cloning this repository does not recreate another machine's installed catalog.
 
 ## Recommended third-party skills and tools
 
-**Sources reviewed: 16 November 2026.** These are recommendations, not an
-inventory of what is installed. Each package link leads to its current setup
-instructions. Skill names and installation methods change; check upstream before
-updating an existing installation.
+**Sources reviewed: 17 November 2026.** These are recommendations, not an
+inventory of what is installed. If you have shelved a recommended bundle,
+see [SHELF.md](SHELF.md) before installing a package again. Each package link
+leads to its current setup instructions. Skill names and installation methods
+change; check upstream before updating an existing installation.
 
 Choose packages for the work you do. A skill supplies guidance; a CLI supplies
 an executable. Some publishers bundle skills, hooks, and MCP servers in a plugin
@@ -71,7 +80,7 @@ avoid duplicate discovery.
 | Package | When to choose it | Entry point |
 |---|---|---|
 | [Impeccable](https://github.com/pbakaus/impeccable) | Build or refine interfaces, review UX, audit accessibility, and improve typography, layout, copy, or polish. | `impeccable critique` or `impeccable polish` with a target. |
-| [Emil Kowalski's skills](https://github.com/emilkowalski/skills) | Motion and interaction design: easing, timing, gestures, choreography, performance, and mobile behavior. | `ask-emil` to choose a workflow; `emil-design-eng` for the main guidance. |
+| [Emil Kowalski's skills](https://github.com/emilkowalski/skills) | Motion and interaction design: easing, timing, gestures, choreography, performance, and mobile behavior. | `emil-design-eng` for the main guidance; `animate`, `gestures`, and `choreograph` for specific work. |
 | [Jakub Krehel's skills](https://github.com/jakubkrehel/skills) | Review an interface across disciplines, then address specific issues. | `better-interface`, with the `better-*` skills for UI, typography, colors, accessibility, layout, and writing. |
 | [Taste Skill](https://github.com/Leonxlnx/taste-skill) | Build or redesign a company website with a coherent visual direction, real assets, and browser verification. | `design-taste-frontend`. Requires Node.js 22+ and Chrome, Edge, or Chromium. |
 | [Imagegen skills](https://github.com/Leonxlnx/imagegen-skills) | Explore web/mobile design images or brand assets before implementation. | `imagegen-frontend-web`, `imagegen-frontend-mobile`, `brandkit`; `image-to-code` also implements the result. Requires image-generation capability. |
@@ -237,20 +246,19 @@ understood. App-bundled plugin and internal system skills remain app-managed.
 
 Overlap rules for this collection:
 
-- `ship` and `handoff` resolve to this repository's workflows. Skip conflicting
-  third-party names during installation. Retired names are listed in
-  [disabled-skills.txt](disabled-skills.txt); the sync reports excluded entries
-  but does not remove them.
+- `timb-ship` and `timb-handoff-and-follow-up` are this repository's workflows.
+  Third-party skills can be shelved temporarily when you do not need them.
+  Shelving does not mean a skill is obsolete or permanently excluded.
 - Emil and Matt both publish `prototype`. The local convention is
   `emil-prototype` for Emil's version, renamed in both folder and frontmatter.
   Preserve that rename when refreshing; it is not an upstream skill name.
 - Impeccable's `animate` is a subcommand, so it can coexist with Emil's standalone
   `animate` skill.
 - The [policy script](scripts/apply-skill-policy.py), run by `install.sh`, makes
-  `context7-cli` and `code-review` explicit-only when present in the shared store.
-  Use `find-docs` for the existing ordinary docs workflow and `timb-diff-review`
-  for repository reviews. Context7 MCP remains excluded by this repository's
-  current policy; revisit that exclusion when configuring MCP.
+  `context7-cli` and `code-review` explicit-only when a restored copy is present
+  in the shared store. Use `find-docs` for the existing ordinary docs workflow and
+  `timb-diff-review` for repository reviews. Configure MCP servers separately;
+  skill sync does not enable or disable them.
 - Keep related skill bundles together when their entry point calls companion
   skills. In particular, retain the `better-*` family for `better-interface`.
 
@@ -263,10 +271,11 @@ personal-skills/
 ├── scripts/
 │   ├── install.sh
 │   ├── sync-global-skills.sh
-│   └── apply-skill-policy.py
+│   ├── apply-skill-policy.py
+│   ├── legacy-aliases.txt
+│   └── restore-shelved-skills.py
 └── timb-example/
     ├── SKILL.md
-    ├── aliases          # optional, one name per line
     └── references/      # optional supporting material
 ```
 
